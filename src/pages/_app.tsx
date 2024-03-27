@@ -1,6 +1,79 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import App, { AppContext, AppInitialProps, AppProps } from "next/app";
+import { DialogProvider } from "react-dialog-promise";
+import React, { useEffect } from "react";
+import { Header } from "@/components/Header";
+import { css } from "../../styled-system/css";
+import { usePathname } from "next/navigation";
+import { useFileStore } from "@/stores/files";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+export default function MyApp({ Component, pageProps }: AppProps) {
+  const pathname = usePathname();
+
+  const init = useFileStore((state) => state.init);
+  const ready = useFileStore((state) => state.ready);
+  const loading = useFileStore((state) => state.loading);
+
+  function scrollTop() {
+    window &&
+      document.documentElement.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+  }
+
+  useEffect(() => void init(), []);
+
+  useEffect(() => window && scrollTop(), [pathname]);
+
+  if (loading && !ready) return <div>Loading...</div>;
+  if (!loading && !ready) return <div>Error</div>;
+
+  return (
+    <DialogProvider>
+      <Header />
+      <main
+        className={css({
+          position: "absolute",
+          top: 20,
+          width: "100%",
+          px: 10,
+          pb: "200px",
+        })}
+      >
+        <Component {...pageProps} />
+      </main>
+      <div
+        onClick={scrollTop}
+        className={css({
+          width: 10,
+          height: 10,
+          bgColor: "white",
+          shadow: "xl",
+          rounded: "md",
+          border: ".2px gray solid",
+          position: "fixed",
+          bottom: 10,
+          right: 10,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+        })}
+      >
+        Top
+      </div>
+    </DialogProvider>
+  );
 }
+
+export const getInitialProps = async (
+  context: AppContext,
+): Promise<{ example: string } & AppInitialProps> => {
+  const ctx = await App.getInitialProps(context);
+
+  console.log("APP GET INITIAL PROPS");
+
+  return { ...ctx, example: "data" };
+};
