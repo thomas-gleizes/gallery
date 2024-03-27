@@ -3,7 +3,6 @@ import { css } from "../../styled-system/css";
 import { useDialog } from "react-dialog-promise";
 import { useIsDisplay } from "@/hooks/useIsDisplay";
 import Viewer from "@/components/Viewer";
-import Image from "next/image";
 
 type AssetProps = {
   asset: AssetType;
@@ -13,6 +12,10 @@ type AssetProps = {
 
 const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
   const [isDisplay, ref] = useIsDisplay<HTMLDivElement>(1.5);
+
+  if (!asset.dimensions.width) {
+    return null;
+  }
 
   return (
     <div
@@ -38,12 +41,15 @@ const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
           {number}
         </div>
       )}
-      <Image
+      <img
         width={asset.dimensions.width}
         height={asset.dimensions.height}
-        src={asset.url}
+        src={isDisplay ? asset.url : ""}
         alt={asset.name}
-        className={css({ bgColor: "gray.300" })}
+        className={css({
+          bgColor: "gray.300",
+          visibility: isDisplay ? "visible" : "hidden",
+        })}
       />
     </div>
   );
@@ -75,7 +81,7 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets }) => {
         gridAutoRows: "auto",
       })}
     >
-      {assets.map((asset, index) => (
+      {assets.slice(0, 99).map((asset, index) => (
         <Asset
           key={asset.hash}
           asset={asset}

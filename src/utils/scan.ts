@@ -41,8 +41,8 @@ export default async function scan(path: string, files: FilesTypes = []) {
         hash: hash(pathFile),
         timestamp: stat.birthtime.getTime(),
         url: new URL(
-          `http://localhost:8080/static${pathFile.split(".images").pop()}`,
-        ).href,
+          `http://exemple.com/static${pathFile.split(".images").pop()}`,
+        ).pathname,
         file: "other",
         dimensions: { width: NaN, height: NaN, orientation: "unknown" },
       };

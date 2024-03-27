@@ -1,12 +1,12 @@
 import { NextPage } from "next";
 import React, { useMemo } from "react";
+import { useParams } from "next/navigation";
 
 import { css } from "../../../styled-system/css";
 import { extractAssets } from "@/utils/helpers";
 import Folder from "@/components/Folder";
-import AssetsGrid from "@/components/AssetsGrid";
 import { useFileStore } from "@/stores/files";
-import { useParams } from "next/navigation";
+import Gallery from "@/components/Gallery";
 
 const DirectoryPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
@@ -86,34 +86,10 @@ const DirectoryPage: NextPage = () => {
       )}
 
       {assets.images.length > 0 && (
-        <div>
-          <div
-            className={css({
-              borderBottom: "1px solid",
-              my: 4,
-            })}
-          >
-            <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-              Images - {assets.images.length}
-            </h2>
-          </div>
-          <AssetsGrid
-            assets={isFirstDirectory ? assets.images : assets.images}
-          />
-        </div>
+        <Gallery title="Images" assets={assets.images} />
       )}
-
       {assets.videos.length > 0 && (
-        <div>
-          <div className={css({ borderBottom: "1px solid", my: 4 })}>
-            <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-              Videos - {assets.videos.length}
-            </h2>
-          </div>
-          {assets.videos.map((video) => (
-            <video key={video.hash} src={video.url} />
-          ))}
-        </div>
+        <Gallery title="Videos" assets={assets.videos} />
       )}
     </div>
   );

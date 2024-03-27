@@ -1,10 +1,11 @@
-import "@/styles/globals.css";
-import App, { AppContext, AppInitialProps, AppProps } from "next/app";
+import { AppProps } from "next/app";
+import { usePathname } from "next/navigation";
 import { DialogProvider } from "react-dialog-promise";
 import React, { useEffect } from "react";
-import { Header } from "@/components/Header";
+
+import "@/styles/globals.css";
 import { css } from "../../styled-system/css";
-import { usePathname } from "next/navigation";
+import { Header } from "@/components/Header";
 import { useFileStore } from "@/stores/files";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -67,13 +68,3 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     </DialogProvider>
   );
 }
-
-export const getInitialProps = async (
-  context: AppContext,
-): Promise<{ example: string } & AppInitialProps> => {
-  const ctx = await App.getInitialProps(context);
-
-  console.log("APP GET INITIAL PROPS");
-
-  return { ...ctx, example: "data" };
-};

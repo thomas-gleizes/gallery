@@ -72,12 +72,8 @@ const Viewer: DialogComponent<Props, void> = ({
         >
           {currentIndex + 1} / {assets.length}
         </div>
-        <Image
-          width={currentAsset.dimensions.width}
-          height={currentAsset.dimensions.height}
-          className={css({
-            bgColor: "gray.300",
-          })}
+        <img
+          className={css({ bgColor: "gray.300", maxH: "99vh", maxW: "99vw" })}
           src={currentAsset.url}
           alt={currentAsset.name}
         />

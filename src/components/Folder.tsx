@@ -10,41 +10,12 @@ type Props = {
   isHomePage: boolean;
 };
 
-const FolderImage: React.FC<{ url: string }> = ({ url }) => {
-  const [, ref] = useIsDisplay<HTMLDivElement>(1.2);
-  const isDisplay = true;
-
-  if (!url) return null;
-
-  return (
-    <div
-      ref={ref}
-      className={css({
-        overflow: "hidden",
-        display: "flex",
-      })}
-    >
-      <Image
-        src={url}
-        width={300 / 2}
-        height={350 / 2}
-        className={css({
-          objectFit: "cover",
-          objectPosition: "center",
-          bgColor: "gray.300",
-        })}
-        alt={url}
-      />
-    </div>
-  );
-};
-
 export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
   const router = useRouter();
 
-  const images = useMemo(() => {
-    // return first images from four first subdirectories
+  const [isDisplay, ref] = useIsDisplay<HTMLDivElement>(1.2);
 
+  const images = useMemo(() => {
     if (isHomePage) {
       const directories = directory.files.filter(
         (directory) => directory.type === "directory",
@@ -78,22 +49,30 @@ export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
   return (
     <div className={css({ display: "block" })}>
       <div
+        ref={ref}
         onClick={() => router.push(`/directory${directory.pathname}`)}
         className={css({
           bgColor: "gray.200",
           rounded: "lg",
           shadow: "lg",
           display: "grid",
-          gridTemplateColumns: images.length >= 3 ? "repeat(2, 1fr)" : "unset",
           width: "300px",
           height: "350px",
           overflow: "hidden",
         })}
       >
-        <FolderImage url={images[0]?.url} />
-        <FolderImage url={images[1]?.url} />
-        <FolderImage url={images[2]?.url} />
-        <FolderImage url={images[3]?.url} />
+        <img
+          src={isDisplay ? images[0]?.url : ""}
+          alt={images[0]?.name}
+          className={css({
+            w: "100%",
+            h: "100%",
+            visibility: isDisplay ? "visible" : "hidden",
+            bgGradient: "to-br",
+            gradientTo: "gray.200",
+            gradientFrom: "white",
+          })}
+        />
       </div>
       <p
         className={css({

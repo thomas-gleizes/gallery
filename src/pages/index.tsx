@@ -7,6 +7,7 @@ import AssetsGrid from "@/components/AssetsGrid";
 import Folder from "@/components/Folder";
 import { css } from "../../styled-system/css";
 import { useFileStore } from "@/stores/files";
+import Gallery from "@/components/Gallery";
 
 const Home: NextPage = () => {
   const files = useFileStore((state) => state.files);
@@ -66,29 +67,8 @@ const Home: NextPage = () => {
             />
           ))}
         </div>
-        {assets.images.length > 0 && (
-          <div>
-            <div className={css({ borderBottom: "1px solid", my: 4 })}>
-              <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-                Images - {assets.images.length}
-              </h2>
-            </div>
-            <AssetsGrid assets={assets.images} />
-          </div>
-        )}
-
-        {assets.videos.length > 0 && (
-          <div>
-            <div className={css({ borderBottom: "1px solid", my: 4 })}>
-              <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-                Videos - {assets.videos.length}
-              </h2>
-            </div>
-            {/*{assets.videos.map((video) => (*/}
-            {/*  <video key={video.hash} src={video.url} />*/}
-            {/*))}*/}
-          </div>
-        )}
+        <Gallery title="Images" assets={assets.images} />
+        <Gallery title="Videos" assets={assets.videos} />
       </div>
     </>
   );
