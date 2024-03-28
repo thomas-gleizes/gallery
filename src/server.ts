@@ -9,10 +9,14 @@ async function run() {
   const app = fastify();
 
   app.register(fastifyStatic, { root: dirPath, prefix: "/static" });
-  app.register(fastifyNext, { noServeAssets: false, dev: true }).after(() => {
+  app.register(fastifyNext).after(() => {
     app.next("/*", (app, request, reply) => {
-      console.log("path", request.url);
-      return app.render(request.raw, reply.raw, request.url, request.query, {});
+      const url = new URL(
+        `${request.protocol}://${request.hostname}${request.url}`,
+      );
+      console.log("Url", url.pathname, url.searchParams);
+
+      return app.render(request.raw, reply.raw, url.pathname, {});
     });
   });
 

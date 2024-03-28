@@ -3,6 +3,7 @@ import { css } from "../../styled-system/css";
 import { useDialog } from "react-dialog-promise";
 import { useIsDisplay } from "@/hooks/useIsDisplay";
 import Viewer from "@/components/Viewer";
+import { AssetType } from "../../types";
 
 type AssetProps = {
   asset: AssetType;

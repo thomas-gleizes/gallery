@@ -3,7 +3,7 @@ import { css } from "../../styled-system/css";
 import { useIsDisplay } from "@/hooks/useIsDisplay";
 import { extractAssets } from "@/utils/helpers";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import { DirectoryType } from "../../types";
 
 type Props = {
   directory: DirectoryType;

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import imageSize from "image-size";
 
 import { extensions } from "@/utils/helpers";
+import { AssetType, DirectoryType, FilesTypes } from "../../types";
 
 export function hash(string: string) {
   return createHash("sha256").update(string).digest("hex");

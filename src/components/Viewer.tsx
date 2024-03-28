@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DialogComponent } from "react-dialog-promise";
 import { css } from "../../styled-system/css";
-import Image from "next/image";
+import { AssetType } from "../../types";
 
 type Props = {
   assets: AssetType[];

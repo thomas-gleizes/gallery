@@ -3,6 +3,7 @@ import React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { css } from "../../styled-system/css";
 import Link from "next/link";
+import { AssetType } from "../../types";
 
 interface Props {
   assets: AssetType[];

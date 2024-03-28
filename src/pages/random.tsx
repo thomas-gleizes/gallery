@@ -18,7 +18,7 @@ const RandomPage: NextPage = () => {
 
     return {
       photos: items
-        .filter((photo) => photo.url.includes(".jpg"))
+        .filter((photo) => photo.file === "image")
         .sort(() => Math.random() - 0.5),
       videos: [],
     };

@@ -3,20 +3,17 @@ import { NextPage } from "next";
 import React, { useMemo } from "react";
 
 import { extractAssets } from "@/utils/helpers";
-import AssetsGrid from "@/components/AssetsGrid";
 import Folder from "@/components/Folder";
 import { css } from "../../styled-system/css";
 import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
+import { AssetType, DirectoryType, FileType } from "../../types";
 
 const Home: NextPage = () => {
   const files = useFileStore((state) => state.files);
 
-  console.log("Files", files);
-
-  // @ts-ignore
   const directories: DirectoryType[] = files.filter(
-    (file) => file.type === "directory",
+    (file: FileType) => file.type === "directory",
   );
 
   const assets = useMemo(() => {

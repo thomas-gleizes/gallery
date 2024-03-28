@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import scan from "@/utils/scan";
+import { FilesTypes } from "../../../types";
 
 export default async function handler(
   req: NextApiRequest,

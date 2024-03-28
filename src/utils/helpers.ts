@@ -1,3 +1,5 @@
+import { AssetType, DirectoryType } from "../../types";
+
 export function extractAssets(file: AssetType | DirectoryType): AssetType[] {
   if (file.type === "file") {
     return [file];

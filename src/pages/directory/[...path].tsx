@@ -7,6 +7,7 @@ import { extractAssets } from "@/utils/helpers";
 import Folder from "@/components/Folder";
 import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
+import { AssetType, DirectoryType, FileType } from "../../../types";
 
 const DirectoryPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
@@ -18,7 +19,7 @@ const DirectoryPage: NextPage = () => {
 
   const directory = useMemo<AssetType | DirectoryType>(() => {
     let directory = files.find(
-      (file) => file.name === paths[0],
+      (file: FileType) => file.name === paths[0],
     ) as DirectoryType;
 
     if (isFirstDirectory) return directory;

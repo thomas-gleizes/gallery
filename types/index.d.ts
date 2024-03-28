@@ -1,4 +1,6 @@
-type DirectoryType = {
+import { extensions } from "@/utils/helpers";
+
+export type DirectoryType = {
   name: string;
   size: number;
   type: "directory";
@@ -7,7 +9,7 @@ type DirectoryType = {
   pathname: string;
   timestamp: number;
 };
-type AssetType = {
+export type AssetType = {
   name: string;
   size: number;
   type: "file";
@@ -21,4 +23,5 @@ type AssetType = {
     orientation: "portrait" | "landscape" | "square" | "unknown";
   };
 };
-type FilesTypes = Array<DirectoryType | AssetType>;
+export type FileType = DirectoryType | AssetType;
+export type FilesTypes = Array<FileType>;

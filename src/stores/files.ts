@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { FilesTypes } from "../../types";
 
 export const useFileStore = create<{
   files: FilesTypes;
@@ -12,7 +13,6 @@ export const useFileStore = create<{
   init: async () => {
     try {
       set({ loading: true });
-      console.log("Server");
       const response = await fetch("/api/scan");
       const files = await response.json();
       set({ files, ready: true, loading: false });
