@@ -12,6 +12,7 @@ import { AssetType, DirectoryType, FileType } from "../../types";
 const Home: NextPage = () => {
   const files = useFileStore((state) => state.files);
 
+  // @ts-ignore
   const directories: DirectoryType[] = files.filter(
     (file: FileType) => file.type === "directory",
   );
@@ -65,7 +66,7 @@ const Home: NextPage = () => {
           ))}
         </div>
         <Gallery title="Images" assets={assets.images} />
-        <Gallery title="Videos" assets={assets.videos} />
+        {/*<Gallery title="Videos" assets={assets.videos} />*/}
       </div>
     </>
   );

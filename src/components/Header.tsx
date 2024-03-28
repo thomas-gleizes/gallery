@@ -1,7 +1,11 @@
 import { css } from "../../styled-system/css";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { FaChevronLeft } from "react-icons/fa";
 
 export const Header = () => {
+  const router = useRouter();
+
   return (
     <header
       className={css({
@@ -29,7 +33,15 @@ export const Header = () => {
             alignItems: "center",
           })}
         >
-          <ul className={css({ display: "flex", gap: 10 })}>
+          <ul
+            className={css({ display: "flex", alignItems: "center", gap: 10 })}
+          >
+            <li>
+              <FaChevronLeft
+                onClick={() => router.back()}
+                className={css({ color: "white", cursor: "pointer" })}
+              />
+            </li>
             <li>
               <Link
                 href="/"

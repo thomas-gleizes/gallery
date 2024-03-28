@@ -6,21 +6,23 @@ import "dotenv/config";
 const dirPath: string = process.env.TARGET_PATH as string;
 
 async function run() {
-  const app = fastify();
+  const server = fastify();
 
-  app.register(fastifyStatic, { root: dirPath, prefix: "/static" });
-  app.register(fastifyNext).after(() => {
-    app.next("/*", (app, request, reply) => {
-      const url = new URL(
-        `${request.protocol}://${request.hostname}${request.url}`,
+  server.register(fastifyStatic, { root: dirPath, prefix: "/static" });
+  server.register(fastifyNext).after(() => {
+    server.next("/*", (app, request, reply) => {
+      const [pathname, queryString] = request.url.split("?");
+
+      return app.render(
+        request.raw,
+        reply.raw,
+        pathname,
+        Object.fromEntries(new URLSearchParams(queryString)),
       );
-      console.log("Url", url.pathname, url.searchParams);
-
-      return app.render(request.raw, reply.raw, url.pathname, {});
     });
   });
 
-  app.listen({ port: 3000 }).then(() => console.log("server start"));
+  server.listen({ port: 3000 }).then(() => console.log("server start"));
 }
 
 run();

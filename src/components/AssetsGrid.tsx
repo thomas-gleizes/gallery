@@ -1,9 +1,9 @@
 import React from "react";
 import { css } from "../../styled-system/css";
-import { useDialog } from "react-dialog-promise";
 import { useIsDisplay } from "@/hooks/useIsDisplay";
-import Viewer from "@/components/Viewer";
 import { AssetType } from "../../types";
+import Player from "@/components/Player";
+import Image from "next/image";
 
 type AssetProps = {
   asset: AssetType;
@@ -12,15 +12,12 @@ type AssetProps = {
 };
 
 const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
-  const [isDisplay, ref] = useIsDisplay<HTMLDivElement>(1.5);
-
   if (!asset.dimensions.width) {
     return null;
   }
 
   return (
     <div
-      ref={ref}
       onClick={onClick}
       className={css({
         rounded: "lg",
@@ -42,15 +39,13 @@ const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
           {number}
         </div>
       )}
-      <img
+      <Image
         width={asset.dimensions.width}
         height={asset.dimensions.height}
-        src={isDisplay ? asset.url : ""}
         alt={asset.name}
-        className={css({
-          bgColor: "gray.300",
-          visibility: isDisplay ? "visible" : "hidden",
-        })}
+        className={css({ bgColor: "gray.300" })}
+        src={asset.url}
+        unoptimized={asset.url.split(".").pop() === "gif"}
       />
     </div>
   );
@@ -58,19 +53,10 @@ const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
 
 type AssetsGridProps = {
   assets: AssetType[];
+  onView?: (asset: AssetType) => void;
 };
 
-const AssetsGrid: React.FC<AssetsGridProps> = ({ assets }) => {
-  const viewerDialog = useDialog(Viewer);
-
-  const handleClick = async (asset: AssetType) => {
-    const index = assets.findIndex((a) => a.hash === asset.hash);
-    if (index === -1) throw new Error("Asset not found");
-
-    if (viewerDialog.isOpen) return viewerDialog.close();
-    await viewerDialog.open({ startIndex: index, assets });
-  };
-
+const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
   return (
     <div
       className={css({
@@ -82,14 +68,18 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets }) => {
         gridAutoRows: "auto",
       })}
     >
-      {assets.slice(0, 99).map((asset, index) => (
-        <Asset
-          key={asset.hash}
-          asset={asset}
-          onClick={() => handleClick(asset)}
-          number={index + 1}
-        />
-      ))}
+      {assets.map((asset, index) =>
+        asset.file === "image" ? (
+          <Asset
+            key={asset.hash}
+            asset={asset}
+            onClick={() => onView && onView(asset)}
+            number={index + 1}
+          />
+        ) : asset.file === "video" ? (
+          <Player key={asset.hash} asset={asset} />
+        ) : null,
+      )}
     </div>
   );
 };

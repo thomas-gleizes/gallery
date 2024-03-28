@@ -28,6 +28,7 @@ const Viewer: DialogComponent<Props, void> = ({
           close();
           break;
         case "ArrowRight":
+        case " ":
           setCurrentIndex((prev) => (prev + 1) % assets.length);
           break;
         case "ArrowLeft":

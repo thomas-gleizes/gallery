@@ -24,20 +24,21 @@ export function useIsDisplay<E extends Element>(
   );
 
   function handler(): void {
+    console.log("handler", ref.current);
     if (ref.current) {
       const display = elementIsDisplay(ref.current, marge);
       if (display !== isDisplay) setIsDisplay(display);
     }
   }
 
-  useEffect(() => void setTimeout(handler, 100), []);
+  useEffect(() => void setTimeout(handler, 1000), []);
 
   useEffect(() => {
     if (!window) return;
 
-    window.addEventListener("scroll", handler);
+    document.body.addEventListener("scroll", handler);
 
-    return () => window.removeEventListener("scroll", handler);
+    return () => document.body.removeEventListener("scroll", handler);
   }, []);
 
   return [isDisplay, ref];

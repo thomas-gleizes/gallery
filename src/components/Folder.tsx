@@ -4,6 +4,7 @@ import { useIsDisplay } from "@/hooks/useIsDisplay";
 import { extractAssets } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { DirectoryType } from "../../types";
+import Image from "next/image";
 
 type Props = {
   directory: DirectoryType;
@@ -12,8 +13,6 @@ type Props = {
 
 export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
   const router = useRouter();
-
-  const [isDisplay, ref] = useIsDisplay<HTMLDivElement>(1.2);
 
   const images = useMemo(() => {
     if (isHomePage) {
@@ -49,7 +48,6 @@ export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
   return (
     <div className={css({ display: "block" })}>
       <div
-        ref={ref}
         onClick={() => router.push(`/directory${directory.pathname}`)}
         className={css({
           bgColor: "gray.200",
@@ -62,15 +60,18 @@ export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
         })}
       >
         <img
-          src={isDisplay ? images[0]?.url : ""}
+          src={images[0]?.url}
           alt={images[0]?.name}
+          width={300}
+          height={350}
           className={css({
             w: "100%",
             h: "100%",
-            visibility: isDisplay ? "visible" : "hidden",
             bgGradient: "to-br",
             gradientTo: "gray.200",
             gradientFrom: "white",
+            objectFit: "cover",
+            objectPosition: "center",
           })}
         />
       </div>

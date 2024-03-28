@@ -52,7 +52,7 @@ const DirectoryPage: NextPage = () => {
       else if (asset.file === "video") videos.push(asset);
     }
 
-    if (isFirstDirectory) return { images, videos: [] };
+    if (isFirstDirectory) return { images, videos };
 
     return { images, videos };
   }, [directory, isFirstDirectory]);
@@ -85,12 +85,11 @@ const DirectoryPage: NextPage = () => {
           </div>
         </div>
       )}
-
-      {assets.images.length > 0 && (
-        <Gallery title="Images" assets={assets.images} />
-      )}
       {assets.videos.length > 0 && (
         <Gallery title="Videos" assets={assets.videos} />
+      )}
+      {assets.images.length > 0 && (
+        <Gallery title="Images" assets={assets.images} />
       )}
     </div>
   );
