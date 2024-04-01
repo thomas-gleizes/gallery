@@ -47,6 +47,8 @@ const DirectoryPage: NextPage = () => {
     const images: AssetType[] = [];
     const videos: AssetType[] = [];
 
+    console.log("Assets", assets);
+
     for (const asset of assets) {
       if (asset.file === "image") images.push(asset);
       else if (asset.file === "video") videos.push(asset);

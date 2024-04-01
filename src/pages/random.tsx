@@ -3,8 +3,8 @@ import { useMemo } from "react";
 
 import { useFileStore } from "@/stores/files";
 import { extractAssets } from "@/utils/helpers";
-import AssetsGrid from "@/components/AssetsGrid";
 import Gallery from "@/components/Gallery";
+import { AssetType } from "../../types";
 
 const RandomPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
@@ -17,9 +17,7 @@ const RandomPage: NextPage = () => {
     }
 
     return {
-      photos: items
-        .filter((photo) => photo.file === "image")
-        .sort(() => Math.random() - 0.5),
+      photos: items.sort(() => Math.random() - 0.5),
       videos: [],
     };
   }, [files]);

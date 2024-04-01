@@ -22,7 +22,9 @@ async function run() {
     });
   });
 
-  server.listen({ port: 3000 }).then(() => console.log("server start"));
+  server
+    .listen({ port: +process.env.PORT! || 3000 })
+    .then(() => console.log("server start"));
 }
 
 run();

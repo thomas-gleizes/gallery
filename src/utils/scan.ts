@@ -74,5 +74,5 @@ export default async function scan(path: string, files: FilesTypes = []) {
     }
   }
 
-  return files.sort((a, b) => a.timestamp - b.timestamp);
+  return files;
 }

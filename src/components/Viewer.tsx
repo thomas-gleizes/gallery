@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DialogComponent } from "react-dialog-promise";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
+import Player from "@/components/Player";
 
 type Props = {
   assets: AssetType[];
@@ -73,11 +74,15 @@ const Viewer: DialogComponent<Props, void> = ({
         >
           {currentIndex + 1} / {assets.length}
         </div>
-        <img
-          className={css({ bgColor: "gray.300", maxH: "99vh", maxW: "99vw" })}
-          src={currentAsset.url}
-          alt={currentAsset.name}
-        />
+        {currentAsset.file === "image" ? (
+          <img
+            className={css({ bgColor: "gray.300", maxH: "99vh", maxW: "99vw" })}
+            src={currentAsset.url}
+            alt={currentAsset.name}
+          />
+        ) : (
+          <Player asset={currentAsset} />
+        )}
       </div>
     </div>
   );

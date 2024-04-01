@@ -9,20 +9,31 @@ import { AssetType } from "../../types";
 const LatestPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
 
-  const assets = useMemo<AssetType[]>(() => {
+  const assets = useMemo<{ videos: AssetType[]; images: AssetType[] }>(() => {
     const assets: AssetType[] = [];
 
     for (const file of files) {
       assets.push(...extractAssets(file));
     }
 
-    return assets.sort((a, b) => b.timestamp - a.timestamp);
+    const videos: AssetType[] = [];
+    const images: AssetType[] = [];
+
+    for (const asset of assets) {
+      if (asset.file === "video") videos.push(asset);
+      else images.push(asset);
+    }
+
+    return {
+      videos: videos.sort((a, b) => b.timestamp - a.timestamp),
+      images: images.sort((a, b) => b.timestamp - a.timestamp),
+    };
   }, [files]);
 
   return (
     <div>
-      <div>Latest images - {assets.length}</div>
-      <Gallery title="Title" assets={assets} />
+      <Gallery title="Videos" assets={assets.videos} />
+      <Gallery title="Images" assets={assets.images} />
     </div>
   );
 };

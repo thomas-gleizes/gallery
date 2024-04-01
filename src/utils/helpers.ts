@@ -7,7 +7,7 @@ export function extractAssets(file: AssetType | DirectoryType): AssetType[] {
 }
 
 export const extensions = {
-  video: ["MOV", "mp4", "qt", "MP4"],
+  video: ["MOV", "mp4", "qt", "MP4", "mov"],
   image: ["JPG", "jpg", "png", "JPEG", "jpeg", "GIF", "gif", "webp", "PNG"],
   other: ["txt", "zip", "7z", "rar"],
 };
