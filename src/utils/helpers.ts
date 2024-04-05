@@ -12,6 +12,11 @@ export const extensions = {
   other: ["txt", "zip", "7z", "rar"],
 };
 
+export const localKey = {
+  favorite: "favorite",
+  files: "files",
+};
+
 export async function compress(
   string: string,
   encoding: CompressionFormat = "gzip",

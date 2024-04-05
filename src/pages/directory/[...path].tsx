@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useParams } from "next/navigation";
 
 import { css } from "../../../styled-system/css";
-import { extractAssets } from "@/utils/helpers";
+import { extractAssets, localKey } from "@/utils/helpers";
 import Folder from "@/components/Folder";
 import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
@@ -14,18 +14,31 @@ const DirectoryPage: NextPage = () => {
   const params = useParams();
 
   const paths = params.path as string[];
+  const isFavoritesDirectory = paths[0] === "favorites";
 
   const isFirstDirectory = paths.length === 1;
 
   const directory = useMemo<AssetType | DirectoryType>(() => {
+    if (isFavoritesDirectory) {
+      return {
+        pathname: "/favorites",
+        size: files.length,
+        timestamp: 0,
+        hash: "fave",
+        name: "Favorites",
+        type: "directory",
+        files: [],
+      };
+    }
+
     let directory = files.find(
       (file: FileType) => file.name === paths[0],
     ) as DirectoryType;
 
     if (isFirstDirectory) return directory;
-    const [, ...nexTpaths] = paths;
+    const [, ...nextPaths] = paths;
 
-    for (const path of nexTpaths) {
+    for (const path of nextPaths) {
       directory = directory.files.find(
         (file) => file.name === path,
       ) as DirectoryType;
@@ -43,6 +56,20 @@ const DirectoryPage: NextPage = () => {
   }, [directory]);
 
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
+    if (isFirstDirectory) {
+      const favorites = JSON.parse(
+        localStorage.getItem(localKey.favorite) || "[]",
+      );
+      const assets = files
+        .flatMap(extractAssets)
+        .filter((asset) => favorites.includes(asset.hash));
+
+      return {
+        images: assets.filter((asset) => asset.file === "image"),
+        videos: assets.filter((asset) => asset.file === "video"),
+      };
+    }
+
     const assets = extractAssets(directory);
     const images: AssetType[] = [];
     const videos: AssetType[] = [];
@@ -76,11 +103,7 @@ const DirectoryPage: NextPage = () => {
             })}
           >
             {subDirectories.map((subDirectory) => (
-              <Folder
-                key={subDirectory.hash}
-                directory={subDirectory}
-                isHomePage={false}
-              />
+              <Folder key={subDirectory.hash} directory={subDirectory} />
             ))}
           </div>
         </div>

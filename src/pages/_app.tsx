@@ -7,6 +7,7 @@ import "@/styles/globals.css";
 import { css } from "../../styled-system/css";
 import { Header } from "@/components/Header";
 import { useFileStore } from "@/stores/files";
+import { localKey } from "@/utils/helpers";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const pathname = usePathname();
@@ -25,6 +26,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => void init(), []);
+
+  useEffect(() => {
+    if (window && !localStorage.getItem(localKey.favorite)) {
+      localStorage.setItem(localKey.favorite, JSON.stringify([]));
+    }
+  }, []);
 
   useEffect(() => window && scrollTop(), [pathname]);
 

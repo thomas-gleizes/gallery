@@ -1,41 +1,17 @@
 import React, { useMemo } from "react";
 import { css } from "../../styled-system/css";
-import { useIsDisplay } from "@/hooks/useIsDisplay";
 import { extractAssets } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { DirectoryType } from "../../types";
-import Image from "next/image";
 
 type Props = {
   directory: DirectoryType;
-  isHomePage: boolean;
 };
 
-export const Folder: React.FC<Props> = ({ directory, isHomePage = false }) => {
+export const Folder: React.FC<Props> = ({ directory }) => {
   const router = useRouter();
 
   const images = useMemo(() => {
-    if (isHomePage) {
-      const directories = directory.files.filter(
-        (directory) => directory.type === "directory",
-      );
-      const images = [];
-
-      for (const dir of directories) {
-        const assets = extractAssets(dir);
-        const imgs = assets.filter(
-          (file) =>
-            file.file === "image" &&
-            file.dimensions.width <= file.dimensions.height,
-        );
-
-        if (imgs.length === 0) continue;
-        images.push(imgs[0]);
-        if (images.length === 4) break;
-      }
-      return images;
-    }
-
     return extractAssets(directory)
       .filter(
         (file) =>

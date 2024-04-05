@@ -2,7 +2,7 @@ import Head from "next/head";
 import { NextPage } from "next";
 import React, { useMemo } from "react";
 
-import { extractAssets } from "@/utils/helpers";
+import { extractAssets, localKey } from "@/utils/helpers";
 import Folder from "@/components/Folder";
 import { css } from "../../styled-system/css";
 import { useFileStore } from "@/stores/files";
@@ -32,6 +32,26 @@ const Home: NextPage = () => {
     return { images, videos };
   }, [directories]);
 
+  const favoriteDirectories = useMemo<DirectoryType | null>(() => {
+    const favorites = JSON.parse(
+      localStorage.getItem(localKey.favorite) || "[]",
+    );
+
+    const file = assets.images.find((asset) => favorites.includes(asset.hash));
+
+    if (!file) return null;
+
+    return {
+      pathname: "/favorites",
+      size: files.length,
+      timestamp: 0,
+      hash: "fave",
+      name: "Favorites",
+      type: "directory",
+      files: [file],
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -57,16 +77,12 @@ const Home: NextPage = () => {
             gap: 5,
           })}
         >
+          {favoriteDirectories && <Folder directory={favoriteDirectories} />}
           {directories.map((subDirectory) => (
-            <Folder
-              key={subDirectory.hash}
-              directory={subDirectory}
-              isHomePage={true}
-            />
+            <Folder key={subDirectory.hash} directory={subDirectory} />
           ))}
         </div>
         <Gallery title="Images" assets={assets.images} />
-        {/*<Gallery title="Videos" assets={assets.videos} />*/}
       </div>
     </>
   );
