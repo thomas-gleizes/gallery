@@ -1,13 +1,16 @@
 import { css } from "../../styled-system/css";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaSync } from "react-icons/fa";
+import { useFileStore } from "@/stores/files";
+import { BiLoader } from "react-icons/bi";
 
 export const Header = () => {
   const router = useRouter();
+  const store = useFileStore();
 
   return (
-    <header
+    <div
       className={css({
         position: "fixed",
         width: "100%",
@@ -79,7 +82,28 @@ export const Header = () => {
               </Link>
             </li>
           </ul>
-          <div>
+          <div
+            className={css({
+              display: "flex",
+              gap: 5,
+              justifyContent: "end",
+              alignItems: "center",
+            })}
+          >
+            <div
+              onClick={() => !store.loading && store.init()}
+              className={css({
+                color: "white",
+                fontSize: "xl",
+                cursor: "pointer",
+              })}
+            >
+              {store.loading ? (
+                <BiLoader className={css({ animation: "spin" })} />
+              ) : (
+                <FaSync />
+              )}
+            </div>
             <h3
               className={css({
                 fontSize: "xl",
@@ -92,6 +116,6 @@ export const Header = () => {
           </div>
         </div>
       </nav>
-    </header>
+    </div>
   );
 };
