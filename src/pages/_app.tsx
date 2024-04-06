@@ -46,7 +46,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           position: "absolute",
           top: 20,
           width: "100%",
-          px: 10,
+          sm: { px: 10 },
           pb: "200px",
         })}
       >

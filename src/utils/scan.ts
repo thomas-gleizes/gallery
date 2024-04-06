@@ -34,6 +34,10 @@ export default async function scan(path: string, files: FilesTypes = []) {
       files.push(current);
 
       await scan(`${path}/${file}`, current.files);
+
+      for (const file of current.files) {
+        current.size += file.size;
+      }
     } else {
       let current: AssetType = {
         name: file,
@@ -43,7 +47,7 @@ export default async function scan(path: string, files: FilesTypes = []) {
         timestamp: stat.birthtime.getTime(),
         url: new URL(
           `http://localhost:3000/static${pathFile.split(".images").pop()}`,
-        ).href,
+        ).pathname,
         file: "other",
         dimensions: { width: NaN, height: NaN, orientation: "unknown" },
       };

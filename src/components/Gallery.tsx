@@ -7,6 +7,7 @@ import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
 import { useDialog } from "react-dialog-promise";
 import viewer from "@/components/Viewer";
+import { parseSize } from "@/utils/helpers";
 
 interface Props {
   assets: AssetType[];
@@ -37,6 +38,8 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
       });
   };
 
+  const size = assets.reduce((acc, asset) => acc + asset.size, 0);
+
   return (
     <div>
       <div
@@ -48,7 +51,7 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
         })}
       >
         <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-          {title} - {assets.length}
+          {title} - {assets.length} ({parseSize(size)})
         </h2>
         <div>
           {pageIndex > 0 && (

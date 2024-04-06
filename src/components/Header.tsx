@@ -13,9 +13,12 @@ export const Header = () => {
     <div
       className={css({
         position: "fixed",
+        sm: {
+          top: 4,
+          px: 10,
+        },
+        top: 0,
         width: "100%",
-        px: 10,
-        top: 4,
         zIndex: 10,
       })}
     >
@@ -24,7 +27,7 @@ export const Header = () => {
           bgColor: "blue.700",
           px: 5,
           py: 3,
-          rounded: "md",
+          sm: { rounded: "md" },
           shadow: "lg",
         })}
       >
@@ -37,7 +40,12 @@ export const Header = () => {
           })}
         >
           <ul
-            className={css({ display: "flex", alignItems: "center", gap: 10 })}
+            className={css({
+              display: "flex",
+              alignItems: "center",
+              sm: { gap: 10 },
+              gap: 2,
+            })}
           >
             <li>
               <FaChevronLeft

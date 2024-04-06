@@ -10,6 +10,7 @@ import { css } from "../../styled-system/css";
 import { useToggle } from "react-use";
 import { FaPause, FaPlay } from "react-icons/fa6";
 import { FaExpandAlt } from "react-icons/fa";
+import { parseSize } from "@/utils/helpers";
 
 interface Props {
   asset: AssetType;
@@ -51,17 +52,23 @@ const TimeBar: React.FC<{
   return (
     <>
       <div
-        className={css({ h: 1, rounded: "lg" })}
-        style={{
-          width: `${progression}%`,
-          backgroundColor: "rgba(210, 210, 210, .9)",
-        }}
-      />
+        className={css({ h: 1, rounded: "lg", bgColor: "red" })}
+        style={{ backgroundColor: "rgba(210, 210, 210, .1)" }}
+      >
+        <div
+          className={css({ h: 1, rounded: "lg", transition: "width 100ms" })}
+          style={{
+            width: `${progression}%`,
+            backgroundColor: "rgba(210, 210, 210, .9)",
+          }}
+        />
+      </div>
       <div
         onClick={handleSeek}
         className={css({
+          cursor: "pointer",
           width: "full",
-          height: 3,
+          height: 4,
           pos: "absolute",
           top: -1,
         })}
@@ -287,7 +294,13 @@ const Player: React.FC<Props> = ({ asset }) => {
           <div>
             <FaPlay className={css({ fontSize: "6xl" })} />
           </div>
-          <div>{asset.name}</div>
+          <div>
+            {asset.name.slice(
+              Math.max(asset.name.length - 30, 0),
+              asset.name.length,
+            )}
+          </div>
+          <div>({parseSize(asset.size)})</div>
         </div>
       )}
     </div>

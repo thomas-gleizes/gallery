@@ -53,3 +53,13 @@ export async function decompress(
   const buffer = await new Response(cs.readable).arrayBuffer();
   return new TextDecoder().decode(buffer);
 }
+
+export function parseSize(size: number) {
+  const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  let i = 0;
+  while (size >= 1024) {
+    size /= 1024;
+    i++;
+  }
+  return `${size.toFixed(2)} ${units[i]}`;
+}

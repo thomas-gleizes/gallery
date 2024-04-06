@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useParams } from "next/navigation";
 
 import { css } from "../../../styled-system/css";
-import { extractAssets, localKey } from "@/utils/helpers";
+import { extractAssets, localKey, parseSize } from "@/utils/helpers";
 import Folder from "@/components/Folder";
 import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
@@ -13,12 +13,12 @@ const DirectoryPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
   const params = useParams();
 
-  const paths = params.path as string[];
+  const paths = (params?.path || [""]) as string[];
   const isFavoritesDirectory = paths[0] === "favorites";
 
   const isFirstDirectory = paths.length === 1;
 
-  const directory = useMemo<AssetType | DirectoryType>(() => {
+  const directory = useMemo<DirectoryType>(() => {
     if (isFavoritesDirectory) {
       return {
         pathname: "/favorites",
@@ -56,7 +56,7 @@ const DirectoryPage: NextPage = () => {
   }, [directory]);
 
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
-    if (isFirstDirectory) {
+    if (isFavoritesDirectory) {
       const favorites = JSON.parse(
         localStorage.getItem(localKey.favorite) || "[]",
       );
@@ -84,13 +84,18 @@ const DirectoryPage: NextPage = () => {
     return { images, videos };
   }, [directory, isFirstDirectory]);
 
+  const size = useMemo<number>(
+    () => directory.files!.reduce((acc, file) => acc + file.size, 0),
+    [directory],
+  );
+
   return (
     <div>
       {subDirectories.length > 0 && (
         <div>
           <div className={css({ borderBottom: "1px solid", my: 4 })}>
             <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-              Folders - {subDirectories.length}
+              Folders - {subDirectories.length} ({parseSize(size)})
             </h2>
           </div>
           <div

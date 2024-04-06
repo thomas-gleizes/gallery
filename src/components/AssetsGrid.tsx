@@ -1,6 +1,5 @@
 import React from "react";
 import { css } from "../../styled-system/css";
-import { useIsDisplay } from "@/hooks/useIsDisplay";
 import { AssetType } from "../../types";
 import Player from "@/components/Player";
 import Image from "next/image";
@@ -39,13 +38,12 @@ const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
           {number}
         </div>
       )}
-      <Image
+      <img
         width={asset.dimensions.width}
         height={asset.dimensions.height}
         alt={asset.name}
-        className={css({ bgColor: "gray.300" })}
+        className={css({ bgColor: "gray.300", maxWidth: "99vmw" })}
         src={asset.url}
-        unoptimized={asset.url.split(".").pop() === "gif"}
       />
     </div>
   );
