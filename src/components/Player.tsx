@@ -127,7 +127,6 @@ const Player: React.FC<Props> = ({ asset }) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    console.log("KeyDown()", e.key);
     e.preventDefault();
 
     if (!isLoaded) return;

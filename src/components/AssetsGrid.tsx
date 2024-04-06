@@ -2,7 +2,6 @@ import React from "react";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
 import Player from "@/components/Player";
-import Image from "next/image";
 
 type AssetProps = {
   asset: AssetType;
