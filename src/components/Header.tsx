@@ -99,7 +99,7 @@ export const Header = () => {
             })}
           >
             <div
-              onClick={() => !store.loading && store.init()}
+              onClick={() => !store.loading && store.init(true)}
               className={css({
                 color: "white",
                 fontSize: "xl",

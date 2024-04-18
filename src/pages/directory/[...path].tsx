@@ -58,7 +58,7 @@ const DirectoryPage: NextPage = () => {
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
     if (isFavoritesDirectory) {
       const favorites = JSON.parse(
-        localStorage.getItem(localKey.favorite) || "[]",
+        localStorage.getItem(localKey.FAVORITE) || "[]",
       );
       const assets = files
         .flatMap(extractAssets)

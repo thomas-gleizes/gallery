@@ -1,4 +1,4 @@
-import { AssetType, DirectoryType } from "../../types";
+import { AssetType, DirectoryType, FilesTypes } from "../../types";
 
 export function extractAssets(file: AssetType | DirectoryType): AssetType[] {
   if (file.type === "file") {
@@ -13,8 +13,8 @@ export const extensions = {
 };
 
 export const localKey = {
-  favorite: "favorite",
-  files: "files",
+  FAVORITE: "favorite",
+  FILES: "files",
 };
 
 export async function compress(
@@ -62,4 +62,20 @@ export function parseSize(size: number) {
     i++;
   }
   return `${size.toFixed(2)} ${units[i]}`;
+}
+
+export function search(
+  asset: AssetType,
+  files: FilesTypes,
+): DirectoryType | null {
+  for (const file of Object.values(files)) {
+    if (file.type === "directory") {
+      const found = search(asset, file.files);
+      if (found) return found;
+    } else if (file.hash === asset.hash) {
+      return file;
+    }
+  }
+
+  return null;
 }

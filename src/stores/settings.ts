@@ -6,6 +6,8 @@ interface SettingsStore {
 }
 
 export const useSettingsStore = create<SettingsStore>((set) => ({
-  viewerDelay: 2500,
-  setViewerDelay: (delay) => set({ viewerDelay: delay }),
+  viewerDelay: 2000,
+  setViewerDelay: (delay) => {
+    set({ viewerDelay: delay });
+  },
 }));

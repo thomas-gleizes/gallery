@@ -14,6 +14,7 @@ import { AssetType } from "../../types";
 import Player from "@/components/Player";
 import { localKey, parseSize } from "@/utils/helpers";
 import { useSettingsStore } from "@/stores/settings";
+import InputDelay from "@/components/InputDelay";
 
 type Props = {
   assets: AssetType[];
@@ -137,7 +138,7 @@ const Viewer: DialogComponent<Props, void> = ({
 
   const checkFavorite = (hash: string) => {
     const favorites = JSON.parse(
-      localStorage.getItem(localKey.favorite) || "[]",
+      localStorage.getItem(localKey.FAVORITE) || "[]",
     );
     return favorites.includes(hash);
   };
@@ -184,19 +185,19 @@ const Viewer: DialogComponent<Props, void> = ({
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(
-      localStorage.getItem(localKey.favorite) || "[]",
+      localStorage.getItem(localKey.FAVORITE) || "[]",
     );
 
     if (favorites.includes(currentAsset.hash)) {
       localStorage.setItem(
-        localKey.favorite,
+        localKey.FAVORITE,
         JSON.stringify(
           favorites.filter((hash: string) => hash !== currentAsset.hash),
         ),
       );
     } else {
       localStorage.setItem(
-        localKey.favorite,
+        localKey.FAVORITE,
         JSON.stringify([...favorites, currentAsset.hash]),
       );
     }
@@ -240,6 +241,7 @@ const Viewer: DialogComponent<Props, void> = ({
         <button className={classnames.iconButton} onClick={toggleFavorite}>
           <FaStar color={isFavorite ? "#ffdf06" : "#FFFFFF"} />
         </button>
+        {isPlaying && <InputDelay />}
         <button
           className={classnames.iconButton}
           onClick={() => setIsPlaying((state) => !state)}
@@ -275,7 +277,6 @@ const Viewer: DialogComponent<Props, void> = ({
         {currentAsset.file === "image" ? (
           <div>
             <img
-              key={currentAsset.hash}
               className={css({ bgColor: "gray.300" })}
               src={currentAsset.url}
               alt={currentAsset.name}

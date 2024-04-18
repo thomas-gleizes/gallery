@@ -34,7 +34,7 @@ const Home: NextPage = () => {
 
   const favoriteDirectories = useMemo<DirectoryType | null>(() => {
     const favorites = JSON.parse(
-      localStorage.getItem(localKey.favorite) || "[]",
+      localStorage.getItem(localKey.FAVORITE) || "[]",
     );
 
     const file = assets.images.find((asset) => favorites.includes(asset.hash));

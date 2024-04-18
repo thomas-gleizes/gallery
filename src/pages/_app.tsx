@@ -25,11 +25,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       });
   }
 
-  useEffect(() => void init(), []);
+  useEffect(() => void init(false), []);
 
   useEffect(() => {
-    if (window && !localStorage.getItem(localKey.favorite)) {
-      localStorage.setItem(localKey.favorite, JSON.stringify([]));
+    if (window && !localStorage.getItem(localKey.FAVORITE)) {
+      localStorage.setItem(localKey.FAVORITE, JSON.stringify([]));
     }
   }, []);
 
