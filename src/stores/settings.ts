@@ -3,6 +3,10 @@ import { create } from "zustand";
 interface SettingsStore {
   viewerDelay: number;
   setViewerDelay: (delay: number) => void;
+  gallery: "grid" | "list";
+  toggleGallery: () => void;
+  filter: string;
+  setFilter: (filter: string) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>((set) => ({
@@ -10,4 +14,10 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setViewerDelay: (delay) => {
     set({ viewerDelay: delay });
   },
+  gallery: "grid",
+  toggleGallery: () => {
+    set((state) => ({ gallery: state.gallery === "grid" ? "list" : "grid" }));
+  },
+  filter: "",
+  setFilter: (filter) => set({ filter }),
 }));

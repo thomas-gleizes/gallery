@@ -13,6 +13,7 @@ export const useFileStore = create<{
   loading: false,
   init: async (refresh: boolean) => {
     try {
+      set({ loading: true });
       const query = refresh ? "?latest" : "";
 
       const response = await fetch(`/api/scan${query}`);

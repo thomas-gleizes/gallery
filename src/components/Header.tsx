@@ -1,22 +1,32 @@
 import { css } from "../../styled-system/css";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaChevronLeft, FaSync } from "react-icons/fa";
+import { FaChevronLeft, FaList, FaSync } from "react-icons/fa";
 import { useFileStore } from "@/stores/files";
 import { BiLoader } from "react-icons/bi";
+import { useSettingsStore } from "@/stores/settings";
+import { BsGrid } from "react-icons/bs";
 
 export const Header = () => {
   const router = useRouter();
-  const store = useFileStore();
+  const [isLoading, init] = useFileStore((state) => [
+    state.loading,
+    state.init,
+  ]);
+  const [galleryDisplay, toggleGallery] = useSettingsStore((state) => [
+    state.gallery,
+    state.toggleGallery,
+  ]);
+  const [filter, setFilter] = useSettingsStore((state) => [
+    state.filter,
+    state.setFilter,
+  ]);
 
   return (
     <div
       className={css({
         position: "fixed",
-        sm: {
-          top: 4,
-          px: 10,
-        },
+        sm: { top: 4, px: 10 },
         top: 0,
         width: "100%",
         zIndex: 10,
@@ -98,20 +108,46 @@ export const Header = () => {
               alignItems: "center",
             })}
           >
-            <div
-              onClick={() => !store.loading && store.init(true)}
+            <div>
+              <input
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                type="text"
+                placeholder="Search"
+                className={css({
+                  bgColor: "white",
+                  color: "black",
+                  border: "none",
+                  px: 3,
+                  py: 2,
+                  rounded: "md",
+                })}
+              />
+            </div>
+            <button
+              onClick={() => !isLoading && init(true)}
               className={css({
                 color: "white",
                 fontSize: "xl",
                 cursor: "pointer",
               })}
             >
-              {store.loading ? (
+              {isLoading ? (
                 <BiLoader className={css({ animation: "spin" })} />
               ) : (
                 <FaSync />
               )}
-            </div>
+            </button>
+            <button
+              onClick={() => toggleGallery()}
+              className={css({
+                color: "white",
+                fontSize: "xl",
+                cursor: "pointer",
+              })}
+            >
+              {galleryDisplay === "grid" ? <BsGrid /> : <FaList />}
+            </button>
             <h3
               className={css({
                 fontSize: "xl",

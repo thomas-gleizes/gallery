@@ -8,9 +8,12 @@ import Folder from "@/components/Folder";
 import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
 import { AssetType, DirectoryType, FileType } from "../../../types";
+import { useSettingsStore } from "@/stores/settings";
 
 const DirectoryPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
+  const isGridDisplay = useSettingsStore((state) => state.gallery === "grid");
+  const filter = useSettingsStore((state) => state.filter);
   const params = useParams();
 
   const paths = (params?.path || [""]) as string[];
@@ -47,13 +50,29 @@ const DirectoryPage: NextPage = () => {
     return directory;
   }, [paths, files]);
 
-  const subDirectories = useMemo<DirectoryType[]>(() => {
+  const subDirectories = useMemo<{
+    filter: DirectoryType[];
+    all: DirectoryType[];
+  }>(() => {
+    const subDirectories: DirectoryType[] = [];
+
     if (directory.type === "directory") {
-      return directory.files.filter(
-        (file) => file.type === "directory",
-      ) as DirectoryType[];
-    } else return [];
-  }, [directory]);
+      subDirectories.push(
+        ...(directory.files.filter(
+          (file) => file.type === "directory",
+        ) as DirectoryType[]),
+      );
+    }
+
+    if (filter === "") return { all: subDirectories, filter: subDirectories };
+
+    return {
+      filter: subDirectories.filter((directory) =>
+        directory.name.toLowerCase().includes(filter.toLowerCase()),
+      ),
+      all: subDirectories,
+    };
+  }, [directory, filter]);
 
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
     if (isFavoritesDirectory) {
@@ -91,11 +110,12 @@ const DirectoryPage: NextPage = () => {
 
   return (
     <div>
-      {subDirectories.length > 0 && (
+      {subDirectories.all.length > 0 && (
         <div>
           <div className={css({ borderBottom: "1px solid", my: 4 })}>
             <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-              Folders - {subDirectories.length} ({parseSize(size)})
+              Folders - {subDirectories.all.length} ({parseSize(size)}){" "}
+              {filter && `| Filter: ${subDirectories.filter.length}`}
             </h2>
           </div>
           <div
@@ -107,7 +127,7 @@ const DirectoryPage: NextPage = () => {
               gap: 5,
             })}
           >
-            {subDirectories.map((subDirectory) => (
+            {subDirectories.filter.map((subDirectory) => (
               <Folder key={subDirectory.hash} directory={subDirectory} />
             ))}
           </div>
