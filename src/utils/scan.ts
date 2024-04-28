@@ -80,3 +80,22 @@ export default async function scan(path: string, files: FilesTypes = []) {
 
   return files;
 }
+
+export function saveCache(data: FilesTypes): Promise<void> {
+  const path = `${process.env.STATIC_PATH}/${hash(
+    process.env.TARGET_PATH as string,
+  )}.json`;
+
+  return fs.promises.writeFile(path, JSON.stringify(data));
+}
+
+export function readCache(): Promise<FilesTypes> {
+  const path = `${process.env.STATIC_PATH}/${hash(
+    process.env.TARGET_PATH as string,
+  )}.json`;
+
+  return fs.promises
+    .readFile(path, "utf-8")
+    .then((data) => JSON.parse(data) as FilesTypes)
+    .catch(() => []);
+}

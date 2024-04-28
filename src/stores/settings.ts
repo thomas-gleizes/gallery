@@ -7,6 +7,8 @@ interface SettingsStore {
   toggleGallery: () => void;
   filter: string;
   setFilter: (filter: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>((set) => ({
@@ -20,4 +22,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   },
   filter: "",
   setFilter: (filter) => set({ filter }),
+  searchQuery: "",
+  setSearchQuery: (query) => set({ searchQuery: query }),
 }));

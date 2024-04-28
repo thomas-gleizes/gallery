@@ -9,6 +9,7 @@ import { useFileStore } from "@/stores/files";
 import Gallery from "@/components/Gallery";
 import { AssetType, DirectoryType, FileType } from "../../../types";
 import { useSettingsStore } from "@/stores/settings";
+import FolderGallery from "@/components/FolderGallery";
 
 const DirectoryPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
@@ -50,10 +51,7 @@ const DirectoryPage: NextPage = () => {
     return directory;
   }, [paths, files]);
 
-  const subDirectories = useMemo<{
-    filter: DirectoryType[];
-    all: DirectoryType[];
-  }>(() => {
+  const subDirectories = useMemo<DirectoryType[]>(() => {
     const subDirectories: DirectoryType[] = [];
 
     if (directory.type === "directory") {
@@ -64,14 +62,7 @@ const DirectoryPage: NextPage = () => {
       );
     }
 
-    if (filter === "") return { all: subDirectories, filter: subDirectories };
-
-    return {
-      filter: subDirectories.filter((directory) =>
-        directory.name.toLowerCase().includes(filter.toLowerCase()),
-      ),
-      all: subDirectories,
-    };
+    return subDirectories;
   }, [directory, filter]);
 
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
@@ -110,29 +101,13 @@ const DirectoryPage: NextPage = () => {
 
   return (
     <div>
-      {subDirectories.all.length > 0 && (
-        <div>
-          <div className={css({ borderBottom: "1px solid", my: 4 })}>
-            <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-              Folders - {subDirectories.all.length} ({parseSize(size)}){" "}
-              {filter && `| Filter: ${subDirectories.filter.length}`}
-            </h2>
-          </div>
-          <div
-            className={css({
-              display: "flex",
-              flexWrap: "wrap",
-              justifyItems: "center",
-              justifyContent: "center",
-              gap: 5,
-            })}
-          >
-            {subDirectories.filter.map((subDirectory) => (
-              <Folder key={subDirectory.hash} directory={subDirectory} />
-            ))}
-          </div>
-        </div>
-      )}
+      <FolderGallery
+        title="Folders"
+        folders={subDirectories}
+        displayEmpty={false}
+        activeFilter={true}
+        size={size}
+      />
       {assets.videos.length > 0 && (
         <Gallery title="Videos" assets={assets.videos} />
       )}

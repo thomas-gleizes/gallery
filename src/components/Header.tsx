@@ -99,6 +99,18 @@ export const Header = () => {
                 Latest
               </Link>
             </li>
+            <li>
+              <Link
+                href="/search"
+                className={css({
+                  fontSize: "xl",
+                  color: "white",
+                  fontWeight: "semibold",
+                })}
+              >
+                Search
+              </Link>
+            </li>
           </ul>
           <div
             className={css({
