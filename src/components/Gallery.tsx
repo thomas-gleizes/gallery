@@ -8,13 +8,14 @@ import { AssetType } from "../../types";
 import { useDialog } from "react-dialog-promise";
 import viewer from "@/components/Viewer";
 import { parseSize } from "@/utils/helpers";
+import PageIndicator from "@/components/PageIndicator";
 
 interface Props {
   assets: AssetType[];
   title: string;
 }
 
-const PAGE_LENGTH = 100;
+const PAGE_LENGTH = 99;
 
 export const Gallery: React.FC<Props> = ({ assets, title }) => {
   const searchParams = useSearchParams();
@@ -34,7 +35,7 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
     else
       await viewerDialog.open({
         assets: assets,
-        startIndex: index + pageIndex * PAGE_LENGTH,
+        startIndex: index,
       });
   };
 
@@ -53,15 +54,11 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
         <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
           {title} - {assets.length} ({parseSize(size)})
         </h2>
-        <div>
-          {pageIndex > 0 && (
-            <Link href={`${pathname}?page=${pageIndex - 1}`}>Prev page</Link>
-          )}
-          {pageIndex < assets.length / PAGE_LENGTH &&
-            assets.length > PAGE_LENGTH && (
-              <Link href={`${pathname}?page=${pageIndex + 1}`}>Next page</Link>
-            )}
-        </div>
+        <PageIndicator
+          currentPage={pageIndex}
+          totalPages={assets.length / PAGE_LENGTH}
+          pathname={pathname}
+        />
       </div>
       <AssetsGrid
         onView={handleView}
@@ -70,14 +67,12 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
           (pageIndex + 1) * PAGE_LENGTH,
         )}
       />
-      <div>
-        {pageIndex > 0 && (
-          <Link href={`${pathname}?page=${pageIndex - 1}`}>Prev page</Link>
-        )}
-        {pageIndex < assets.length / PAGE_LENGTH &&
-          assets.length > PAGE_LENGTH && (
-            <Link href={`${pathname}?page=${pageIndex + 1}`}>Next page</Link>
-          )}
+      <div className={css({ mt: 10, display: "flex", justifyContent: "end" })}>
+        <PageIndicator
+          currentPage={pageIndex}
+          totalPages={assets.length / PAGE_LENGTH}
+          pathname={pathname}
+        />
       </div>
     </div>
   );

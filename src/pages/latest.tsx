@@ -32,8 +32,8 @@ const LatestPage: NextPage = () => {
 
   return (
     <div>
-      <Gallery title="Videos" assets={assets.videos} />
       <Gallery title="Images" assets={assets.images} />
+      <Gallery title="Videos" assets={assets.videos} />
     </div>
   );
 };

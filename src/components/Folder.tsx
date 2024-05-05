@@ -13,11 +13,7 @@ export const Folder: React.FC<Props> = ({ directory }) => {
 
   const images = useMemo(() => {
     return extractAssets(directory)
-      .filter(
-        (file) =>
-          file.file === "image" &&
-          file.dimensions.width <= file.dimensions.height,
-      )
+      .filter((file) => file.file === "image")
       .slice(0, 4);
   }, [directory]);
 
