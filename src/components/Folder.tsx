@@ -20,7 +20,7 @@ export const Folder: React.FC<Props> = ({ directory }) => {
   return (
     <div className={css({ display: "block" })}>
       <div
-        onClick={() => router.push(`/directory${directory.pathname}`)}
+        onClick={() => router.push(`/d/${directory.pathname}`)}
         className={css({
           bgColor: "gray.200",
           rounded: "lg",

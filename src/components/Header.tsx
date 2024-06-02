@@ -1,11 +1,13 @@
-import { css } from "../../styled-system/css";
 import Link from "next/link";
+import React from "react";
 import { useRouter } from "next/router";
-import { FaChevronLeft, FaList, FaSync } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaChevronLeft, FaSync } from "react-icons/fa";
+import { FaA, FaZ } from "react-icons/fa6";
+
+import { css } from "../../styled-system/css";
 import { useFileStore } from "@/stores/files";
 import { BiLoader } from "react-icons/bi";
 import { useSettingsStore } from "@/stores/settings";
-import { BsGrid } from "react-icons/bs";
 
 export const Header = () => {
   const router = useRouter();
@@ -20,6 +22,10 @@ export const Header = () => {
   const [filter, setFilter] = useSettingsStore((state) => [
     state.filter,
     state.setFilter,
+  ]);
+  const [order, toggleOrder] = useSettingsStore((state) => [
+    state.order,
+    state.toggleOrder,
   ]);
 
   return (
@@ -151,14 +157,24 @@ export const Header = () => {
               )}
             </button>
             <button
-              onClick={() => toggleGallery()}
+              onClick={() => toggleOrder()}
               className={css({
                 color: "white",
                 fontSize: "xl",
                 cursor: "pointer",
+                display: "flex",
+                gap: 2,
               })}
             >
-              {galleryDisplay === "grid" ? <BsGrid /> : <FaList />}
+              {order === "time-ascending" ? (
+                <FaArrowUp />
+              ) : order === "time-descending" ? (
+                <FaArrowDown />
+              ) : order === "alphabetical-a" ? (
+                <FaA />
+              ) : (
+                <FaZ />
+              )}
             </button>
             <h3
               className={css({
@@ -167,7 +183,7 @@ export const Header = () => {
                 fontWeight: "semibold",
               })}
             >
-              Image Viewer
+              Gallery
             </h3>
           </div>
         </div>

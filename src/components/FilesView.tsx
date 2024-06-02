@@ -1,23 +1,20 @@
-import { NextPage } from "next";
 import React, { useMemo } from "react";
-import { useParams } from "next/navigation";
-
-import { css } from "../../../styled-system/css";
-import { extractAssets, localKey, parseSize } from "@/utils/helpers";
-import Folder from "@/components/Folder";
 import { useFileStore } from "@/stores/files";
-import Gallery from "@/components/Gallery";
-import { AssetType, DirectoryType, FileType } from "../../../types";
 import { useSettingsStore } from "@/stores/settings";
+import { AssetType, DirectoryType, FileType } from "../../types";
+import { extractAssets, localKey } from "@/utils/helpers";
 import FolderGallery from "@/components/FolderGallery";
+import Gallery from "@/components/Gallery";
 
-const DirectoryPage: NextPage = () => {
+interface Props {
+  paths: string[];
+}
+
+const FilesView: React.FC<Props> = ({ paths }) => {
   const files = useFileStore((state) => state.files);
-  const isGridDisplay = useSettingsStore((state) => state.gallery === "grid");
   const filter = useSettingsStore((state) => state.filter);
-  const params = useParams();
+  const order = useSettingsStore((state) => state.order);
 
-  const paths = (params?.path || [""]) as string[];
   const isFavoritesDirectory = paths[0] === "favorites";
 
   const isFirstDirectory = paths.length === 1;
@@ -35,6 +32,17 @@ const DirectoryPage: NextPage = () => {
       };
     }
 
+    if (paths.length === 0)
+      return {
+        name: "root",
+        type: "directory",
+        size: files.map((item) => item.size).reduce((a, b) => a + b, 0),
+        files: files,
+        hash: "root",
+        pathname: "/",
+        timestamp: 0,
+      };
+
     let directory = files.find(
       (file: FileType) => file.name === paths[0],
     ) as DirectoryType;
@@ -51,6 +59,14 @@ const DirectoryPage: NextPage = () => {
     return directory;
   }, [paths, files]);
 
+  const orderCallback = useMemo<(a: FileType, b: FileType) => number>(() => {
+    if (order === "time-ascending") return (a, b) => a.timestamp - b.timestamp;
+    if (order === "time-descending") return (a, b) => b.timestamp - a.timestamp;
+    if (order === "alphabetical-z")
+      return (a, b) => b.name.localeCompare(a.name);
+    return (a, b) => a.name.localeCompare(b.name);
+  }, [order]);
+
   const subDirectories = useMemo<DirectoryType[]>(() => {
     const subDirectories: DirectoryType[] = [];
 
@@ -62,8 +78,8 @@ const DirectoryPage: NextPage = () => {
       );
     }
 
-    return subDirectories;
-  }, [directory, filter]);
+    return subDirectories.sort(orderCallback);
+  }, [directory, filter, orderCallback]);
 
   const assets = useMemo<{ images: AssetType[]; videos: AssetType[] }>(() => {
     if (isFavoritesDirectory) {
@@ -89,10 +105,11 @@ const DirectoryPage: NextPage = () => {
       else if (asset.file === "video") videos.push(asset);
     }
 
-    if (isFirstDirectory) return { images, videos };
-
-    return { images, videos };
-  }, [directory, isFirstDirectory]);
+    return {
+      images: images.sort(orderCallback),
+      videos: videos.sort(orderCallback),
+    };
+  }, [directory, isFirstDirectory, orderCallback]);
 
   const size = useMemo<number>(
     () => directory.files!.reduce((acc, file) => acc + file.size, 0),
@@ -118,4 +135,4 @@ const DirectoryPage: NextPage = () => {
   );
 };
 
-export default DirectoryPage;
+export default FilesView;
