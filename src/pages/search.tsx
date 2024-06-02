@@ -133,15 +133,24 @@ const SearchPage: NextPage = () => {
         activeFilter={true}
         displayEmpty={true}
         title="Folders"
+        pagination="fpage"
+        defaultCollapsed={true}
       />
       <FolderGallery
         folders={result.subFolders}
         activeFilter={true}
         displayEmpty={true}
         title="Sub Folders"
+        pagination="sbpage"
+        defaultCollapsed={true}
       />
 
-      <Gallery assets={result.files} title="Files" />
+      <Gallery
+        assets={result.files}
+        title="Files"
+        paginationSuffix="fpage"
+        defaultCollapsed={true}
+      />
     </>
   );
 };

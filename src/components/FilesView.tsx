@@ -2,7 +2,12 @@ import React, { useMemo } from "react";
 import { useFileStore } from "@/stores/files";
 import { useSettingsStore } from "@/stores/settings";
 import { AssetType, DirectoryType, FileType } from "../../types";
-import { extractAssets, localKey } from "@/utils/helpers";
+import {
+  deepSort,
+  extractAssets,
+  getRecentTimestamp,
+  localKey,
+} from "@/utils/helpers";
 import FolderGallery from "@/components/FolderGallery";
 import Gallery from "@/components/Gallery";
 
@@ -60,8 +65,18 @@ const FilesView: React.FC<Props> = ({ paths }) => {
   }, [paths, files]);
 
   const orderCallback = useMemo<(a: FileType, b: FileType) => number>(() => {
-    if (order === "time-ascending") return (a, b) => a.timestamp - b.timestamp;
-    if (order === "time-descending") return (a, b) => b.timestamp - a.timestamp;
+    if (order === "time-ascending")
+      return (a, b) => {
+        if (a.type === "directory" && b.type === "directory")
+          return getRecentTimestamp(a.files) - getRecentTimestamp(b.files);
+        return a.timestamp - b.timestamp;
+      };
+    if (order === "time-descending")
+      return (a, b) => {
+        if (a.type === "directory" && b.type === "directory")
+          return getRecentTimestamp(b.files) - getRecentTimestamp(a.files);
+        return b.timestamp - a.timestamp;
+      };
     if (order === "alphabetical-z")
       return (a, b) => b.name.localeCompare(a.name);
     return (a, b) => a.name.localeCompare(b.name);
@@ -76,6 +91,10 @@ const FilesView: React.FC<Props> = ({ paths }) => {
           (file) => file.type === "directory",
         ) as DirectoryType[]),
       );
+    }
+
+    for (const subDirectory of subDirectories) {
+      subDirectory.files = deepSort(subDirectory.files, orderCallback);
     }
 
     return subDirectories.sort(orderCallback);
@@ -124,12 +143,23 @@ const FilesView: React.FC<Props> = ({ paths }) => {
         displayEmpty={false}
         activeFilter={true}
         size={size}
+        defaultCollapsed={true}
       />
       {assets.videos.length > 0 && (
-        <Gallery title="Videos" assets={assets.videos} />
+        <Gallery
+          title="Videos"
+          assets={assets.videos}
+          paginationSuffix="vpage"
+          defaultCollapsed={false}
+        />
       )}
       {assets.images.length > 0 && (
-        <Gallery title="Images" assets={assets.images} />
+        <Gallery
+          title="Images"
+          assets={assets.images}
+          paginationSuffix="ipage"
+          defaultCollapsed={true}
+        />
       )}
     </div>
   );

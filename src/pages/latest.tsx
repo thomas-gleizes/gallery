@@ -2,17 +2,27 @@ import { NextPage } from "next";
 import React, { useMemo } from "react";
 
 import { useFileStore } from "@/stores/files";
-import { extractAssets } from "@/utils/helpers";
+import {
+  deepSort,
+  extractAllSubDirectories,
+  extractAssets,
+} from "@/utils/helpers";
 import Gallery from "@/components/Gallery";
-import { AssetType } from "../../types";
+import { AssetType, DirectoryType } from "../../types";
+import FolderGallery from "@/components/FolderGallery";
 
 const LatestPage: NextPage = () => {
   const files = useFileStore((state) => state.files);
 
+  const sortedFiles = useMemo(
+    () => deepSort(files, (a, b) => b.timestamp - a.timestamp),
+    [files],
+  );
+
   const assets = useMemo<{ videos: AssetType[]; images: AssetType[] }>(() => {
     const assets: AssetType[] = [];
 
-    for (const file of files) {
+    for (const file of sortedFiles) {
       assets.push(...extractAssets(file));
     }
 
@@ -25,15 +35,41 @@ const LatestPage: NextPage = () => {
     }
 
     return {
-      videos: videos.sort((a, b) => b.timestamp - a.timestamp),
-      images: images.sort((a, b) => b.timestamp - a.timestamp),
+      videos,
+      images,
     };
-  }, [files]);
+  }, [sortedFiles]);
+
+  const subDirectories = useMemo<DirectoryType[]>(
+    () =>
+      extractAllSubDirectories(sortedFiles).sort(
+        (a, b) => b.timestamp - a.timestamp,
+      ),
+    [sortedFiles],
+  );
 
   return (
     <div>
-      <Gallery title="Images" assets={assets.images} />
-      <Gallery title="Videos" assets={assets.videos} />
+      <FolderGallery
+        title="Latest Directory"
+        folders={subDirectories}
+        displayEmpty={false}
+        activeFilter={false}
+        pagination="fpage"
+        defaultCollapsed={true}
+      />
+      <Gallery
+        title="Images"
+        assets={assets.images}
+        paginationSuffix="ipage"
+        defaultCollapsed={true}
+      />
+      <Gallery
+        title="Videos"
+        assets={assets.videos}
+        paginationSuffix="vpage"
+        defaultCollapsed={false}
+      />
     </div>
   );
 };

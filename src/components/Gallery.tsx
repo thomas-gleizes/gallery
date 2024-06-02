@@ -9,22 +9,36 @@ import { useDialog } from "react-dialog-promise";
 import viewer from "@/components/Viewer";
 import { parseSize } from "@/utils/helpers";
 import PageIndicator from "@/components/PageIndicator";
+import { useToggle } from "react-use";
+import Collapse from "@/components/Collapse";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface Props {
   assets: AssetType[];
   title: string;
+  paginationSuffix?: string;
+  defaultCollapsed?: boolean;
 }
 
 const PAGE_LENGTH = 99;
 
-export const Gallery: React.FC<Props> = ({ assets, title }) => {
+export const Gallery: React.FC<Props> = ({
+  assets,
+  title,
+  paginationSuffix,
+  defaultCollapsed,
+}) => {
+  const suffix = paginationSuffix || "page";
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const [isOpen, toggleOpen] = useToggle(defaultCollapsed ?? false);
+
   const viewerDialog = useDialog(viewer);
 
-  const pageIndex: number = parseInt(searchParams.get("page") || "")
-    ? parseInt(searchParams.get("page")!)
+  const pageIndex: number = parseInt(searchParams.get(suffix) || "")
+    ? parseInt(searchParams.get(suffix)!)
     : 0;
 
   const handleView = async (asset: AssetType) => {
@@ -54,26 +68,49 @@ export const Gallery: React.FC<Props> = ({ assets, title }) => {
         <h2 className={css({ fontSize: "xl", fontWeight: "medium" })}>
           {title} - {assets.length} ({parseSize(size)})
         </h2>
-        <PageIndicator
-          currentPage={pageIndex}
-          totalPages={assets.length / PAGE_LENGTH}
-          pathname={pathname}
-        />
+        <div
+          className={css({
+            display: "flex",
+            justifyContent: "end",
+            gap: 5,
+            alignItems: "center",
+          })}
+        >
+          <div
+            className={css({ cursor: "pointer" })}
+            onClick={() => toggleOpen()}
+          >
+            {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+          </div>
+          <PageIndicator
+            currentPage={pageIndex}
+            totalPages={assets.length / PAGE_LENGTH}
+            pathname={pathname}
+            paramKey={suffix}
+          />
+        </div>
       </div>
-      <AssetsGrid
-        onView={handleView}
-        assets={assets.slice(
-          pageIndex * PAGE_LENGTH,
-          (pageIndex + 1) * PAGE_LENGTH,
-        )}
-      />
-      <div className={css({ mt: 10, display: "flex", justifyContent: "end" })}>
-        <PageIndicator
-          currentPage={pageIndex}
-          totalPages={assets.length / PAGE_LENGTH}
-          pathname={pathname}
+      <Collapse isOpen={isOpen}>
+        <AssetsGrid
+          onView={handleView}
+          assets={assets.slice(
+            pageIndex * PAGE_LENGTH,
+            (pageIndex + 1) * PAGE_LENGTH,
+          )}
         />
-      </div>
+      </Collapse>
+      {isOpen && (
+        <div
+          className={css({ mt: 10, display: "flex", justifyContent: "end" })}
+        >
+          <PageIndicator
+            currentPage={pageIndex}
+            totalPages={assets.length / PAGE_LENGTH}
+            pathname={pathname}
+            paramKey={suffix}
+          />
+        </div>
+      )}
     </div>
   );
 };

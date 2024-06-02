@@ -1,9 +1,32 @@
-import { AssetType, DirectoryType, FilesTypes } from "../../types";
+import { AssetType, DirectoryType, FilesTypes, FileType } from "../../types";
 
 export function extractAssets(file: AssetType | DirectoryType): AssetType[] {
   if (file.type === "file") {
     return [file];
   } else return Object.values(file.files).flatMap(extractAssets);
+}
+
+export function extractAllSubDirectories(file: FilesTypes): DirectoryType[] {
+  const directories: DirectoryType[] = [];
+
+  for (const subFile of file) {
+    if (subFile.type === "directory") {
+      directories.push(subFile);
+      directories.push(...extractAllSubDirectories(subFile.files));
+    }
+  }
+
+  return directories;
+}
+
+export function getRecentTimestamp(files: FilesTypes): number {
+  return files.reduce((acc, file) => {
+    if (file.type === "directory") {
+      return Math.max(acc, getRecentTimestamp(file.files));
+    } else {
+      return Math.max(acc, file.timestamp);
+    }
+  }, 0);
 }
 
 export const extensions = {
@@ -62,4 +85,17 @@ export function parseSize(size: number) {
     i++;
   }
   return `${size.toFixed(2)} ${units[i]}`;
+}
+
+export function deepSort(
+  files: FilesTypes,
+  sortCallback: (a: FileType, b: FileType) => number,
+): FilesTypes {
+  for (const file of files) {
+    if (file.type === "directory") {
+      file.files = deepSort(file.files, sortCallback);
+    }
+  }
+
+  return files.sort(sortCallback);
 }

@@ -24,7 +24,12 @@ const RandomPage: NextPage = () => {
 
   return (
     <div>
-      <Gallery title="Random" assets={assets.photos} />
+      <Gallery
+        title="Random"
+        assets={assets.photos}
+        defaultCollapsed={true}
+        paginationSuffix="rpage"
+      />
     </div>
   );
 };
