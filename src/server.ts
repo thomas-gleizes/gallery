@@ -4,8 +4,8 @@ import fastifyStatic from "@fastify/static";
 import fastifyNext from "@fastify/nextjs";
 import "dotenv/config";
 import { dirname } from "node:path";
-import scan, { readCache, saveCache } from "@/utils/scan";
-import { DirectoryType, FilesTypes } from "../types";
+import scan, { cachePath, readCache, saveCache } from "@/utils/scan";
+import { FilesTypes } from "../types";
 
 const dirPath: string = process.env.TARGET_PATH as string;
 process.env.STATIC_PATH = `${dirname(__dirname)}/static`;
@@ -80,6 +80,10 @@ async function bootstrap() {
     } catch (error) {
       console.log("Error", error);
     }
+  });
+
+  fs.watch(cachePath, async () => {
+    FILES = await readCache();
   });
 
   const server = fastify();

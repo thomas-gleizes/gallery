@@ -12,8 +12,10 @@ import { FaPause, FaPlay } from "react-icons/fa6";
 import { FaExpandAlt } from "react-icons/fa";
 import { parseSize } from "@/utils/helpers";
 
-interface Props {
+export interface PlayerProps {
   asset: AssetType;
+  autoPlay?: boolean;
+  onEnd?: () => void;
 }
 
 const TimeBar: React.FC<{
@@ -104,7 +106,7 @@ const TimeIndicator: React.FC<{
   return `${currentTime} / ${formatTime(videoRef.current?.duration || 0)}`;
 };
 
-const Player: React.FC<Props> = ({ asset }) => {
+const Player: React.FC<PlayerProps> = ({ asset, autoPlay }) => {
   const [isLoaded, setLoaded] = useState<boolean>(false);
   const [isPlaying, togglePlaying] = useToggle(false);
   const [displayOverlay, toggleOverlay] = useState<boolean>(false);
@@ -177,6 +179,12 @@ const Player: React.FC<Props> = ({ asset }) => {
       document.exitFullscreen();
     }
   }, [isFullScreen]);
+
+  useEffect(() => {
+    if (autoPlay) {
+      setLoaded(true);
+    }
+  }, []);
 
   const handleSeek = (time: number) => {
     videoRef.current!.currentTime = time;

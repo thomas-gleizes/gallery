@@ -1,13 +1,21 @@
 import Link from "next/link";
 import React from "react";
 import { useRouter } from "next/router";
-import { FaArrowDown, FaArrowUp, FaChevronLeft, FaSync } from "react-icons/fa";
-import { FaA, FaZ } from "react-icons/fa6";
+import { FaRandom, FaSync } from "react-icons/fa";
+import {
+  FaArrowDown,
+  FaArrowUp,
+  FaChevronLeft,
+  FaA,
+  FaZ,
+} from "react-icons/fa6";
 
 import { css } from "../../styled-system/css";
 import { useFileStore } from "@/stores/files";
 import { BiLoader } from "react-icons/bi";
 import { useSettingsStore } from "@/stores/settings";
+import { CiBoxList } from "react-icons/ci";
+import { BsGrid } from "react-icons/bs";
 
 export const Header = () => {
   const router = useRouter();
@@ -157,6 +165,16 @@ export const Header = () => {
               )}
             </button>
             <button
+              onClick={() => toggleGallery()}
+              className={css({
+                color: "white",
+                fontSize: "xl",
+                cursor: "pointer",
+              })}
+            >
+              {galleryDisplay === "grid" ? <BsGrid /> : <CiBoxList />}
+            </button>
+            <button
               onClick={() => toggleOrder()}
               className={css({
                 color: "white",
@@ -172,8 +190,10 @@ export const Header = () => {
                 <FaArrowDown />
               ) : order === "alphabetical-a" ? (
                 <FaA />
-              ) : (
+              ) : order === "alphabetical-z" ? (
                 <FaZ />
+              ) : (
+                <FaRandom />
               )}
             </button>
             <h3

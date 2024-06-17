@@ -6,9 +6,10 @@ import { DirectoryType } from "../../types";
 
 type Props = {
   directory: DirectoryType;
+  inline?: boolean;
 };
 
-export const Folder: React.FC<Props> = ({ directory }) => {
+export const Folder: React.FC<Props> = ({ directory, inline }) => {
   const router = useRouter();
 
   const images = useMemo(() => {
@@ -18,27 +19,38 @@ export const Folder: React.FC<Props> = ({ directory }) => {
   }, [directory]);
 
   return (
-    <div className={css({ display: "block" })}>
+    <div
+      className={
+        inline
+          ? css({
+              display: "flex",
+              justifyContent: "left",
+              alignItems: "center",
+              gap: "2rem",
+              width: "100%",
+            })
+          : css({ display: "block" })
+      }
+    >
       <div
         onClick={() => router.push(`/d/${directory.pathname}`)}
-        className={css({
-          bgColor: "gray.200",
-          rounded: "lg",
-          shadow: "lg",
-          display: "grid",
-          width: "300px",
-          height: "350px",
-          overflow: "hidden",
-        })}
+        className={css(
+          {
+            bgColor: "gray.200",
+            rounded: "lg",
+            shadow: "lg",
+            overflow: "hidden",
+            cursor: "pointer",
+          },
+          inline
+            ? { width: "300px", height: "200px" }
+            : { width: "300", height: "350" },
+        )}
       >
         <img
           src={images[0]?.url}
           alt={images[0]?.name}
-          width={300}
-          height={350}
           className={css({
-            w: "100%",
-            h: "100%",
             bgGradient: "to-br",
             gradientTo: "gray.200",
             gradientFrom: "white",
@@ -48,11 +60,15 @@ export const Folder: React.FC<Props> = ({ directory }) => {
         />
       </div>
       <p
-        className={css({
-          textOverflow: "hidden",
-          overflow: "hidden",
-          width: "200px",
-        })}
+        className={css(
+          {
+            textOverflow: "hidden",
+            overflow: "hidden",
+          },
+          inline
+            ? { fontSize: "2rem" }
+            : { fontSize: "1.5rem", width: "300px" },
+        )}
       >
         {directory.name}
       </p>

@@ -7,9 +7,12 @@ import {
   extractAssets,
   getRecentTimestamp,
   localKey,
+  randomSort,
 } from "@/utils/helpers";
 import FolderGallery from "@/components/FolderGallery";
 import Gallery from "@/components/Gallery";
+import { useDialog } from "react-dialog-promise";
+import viewer from "@/components/Viewer";
 
 interface Props {
   paths: string[];
@@ -65,21 +68,28 @@ const FilesView: React.FC<Props> = ({ paths }) => {
   }, [paths, files]);
 
   const orderCallback = useMemo<(a: FileType, b: FileType) => number>(() => {
-    if (order === "time-ascending")
-      return (a, b) => {
-        if (a.type === "directory" && b.type === "directory")
-          return getRecentTimestamp(a.files) - getRecentTimestamp(b.files);
-        return a.timestamp - b.timestamp;
-      };
-    if (order === "time-descending")
-      return (a, b) => {
-        if (a.type === "directory" && b.type === "directory")
-          return getRecentTimestamp(b.files) - getRecentTimestamp(a.files);
-        return b.timestamp - a.timestamp;
-      };
-    if (order === "alphabetical-z")
-      return (a, b) => b.name.localeCompare(a.name);
-    return (a, b) => a.name.localeCompare(b.name);
+    switch (order) {
+      case "time-ascending":
+        return (a, b) => {
+          if (a.type === "directory" && b.type === "directory")
+            return getRecentTimestamp(a.files) - getRecentTimestamp(b.files);
+          return a.timestamp - b.timestamp;
+        };
+      case "time-descending":
+        return (a, b) => {
+          if (a.type === "directory" && b.type === "directory")
+            return getRecentTimestamp(b.files) - getRecentTimestamp(a.files);
+          return b.timestamp - a.timestamp;
+        };
+      case "alphabetical-z":
+        return (a, b) => b.name.localeCompare(a.name);
+      case "alphabetical-a":
+        return (a, b) => a.name.localeCompare(b.name);
+      case "random":
+        return () => Math.random() - 0.5;
+      default:
+        return () => 1;
+    }
   }, [order]);
 
   const subDirectories = useMemo<DirectoryType[]>(() => {
@@ -124,6 +134,13 @@ const FilesView: React.FC<Props> = ({ paths }) => {
       else if (asset.file === "video") videos.push(asset);
     }
 
+    if (order === "random") {
+      return {
+        images: randomSort(images),
+        videos: randomSort(videos),
+      };
+    }
+
     return {
       images: images.sort(orderCallback),
       videos: videos.sort(orderCallback),
@@ -135,8 +152,28 @@ const FilesView: React.FC<Props> = ({ paths }) => {
     [directory],
   );
 
+  const viewerDialog = useDialog(viewer);
+
+  const handleClick = async () => {
+    let assets = extractAssets(directory);
+
+    if (order === "random") {
+      assets = randomSort(assets);
+    } else {
+      assets = assets.sort(orderCallback);
+    }
+
+    await viewerDialog.open({
+      assets: extractAssets(directory),
+      startIndex: 0,
+    });
+  };
+
   return (
     <div>
+      <div>
+        <button onClick={handleClick}>play</button>
+      </div>
       <FolderGallery
         title="Folders"
         folders={subDirectories}

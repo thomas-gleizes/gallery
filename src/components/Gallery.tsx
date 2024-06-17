@@ -1,6 +1,5 @@
 import React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
 
 import AssetsGrid from "@/components/AssetsGrid";
 import { css } from "../../styled-system/css";

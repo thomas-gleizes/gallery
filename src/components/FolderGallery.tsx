@@ -31,6 +31,8 @@ const FolderGallery: React.FC<Props> = ({
   pagination,
   defaultCollapsed = false,
 }) => {
+  const galleryDisplay = useSettingsStore((state) => state.gallery);
+
   const [isOpen, toggleOpen] = useToggle(defaultCollapsed);
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -100,23 +102,43 @@ const FolderGallery: React.FC<Props> = ({
         </div>
       </div>
       <Collapse isOpen={isOpen}>
-        <div
-          className={css({
-            display: "flex",
-            flexWrap: "wrap",
-            justifyItems: "center",
-            justifyContent: "center",
-            gap: 5,
-          })}
-        >
-          {displayFolders.filter.length ? (
-            displayFolders.map((folder) => (
-              <Folder key={folder.hash} directory={folder} />
-            ))
-          ) : (
-            <div>No folders</div>
-          )}
-        </div>
+        {galleryDisplay === "grid" ? (
+          <div
+            className={css({
+              display: "flex",
+              flexWrap: "wrap",
+              justifyItems: "center",
+              justifyContent: "center",
+              gap: 5,
+            })}
+          >
+            {displayFolders.filter.length ? (
+              displayFolders.map((folder) => (
+                <Folder key={folder.hash} directory={folder} inline={false} />
+              ))
+            ) : (
+              <div>No folders</div>
+            )}
+          </div>
+        ) : (
+          <div
+            className={css({
+              display: "flex",
+              flexDirection: "column",
+              justifyItems: "center",
+              justifyContent: "center",
+              gap: 5,
+            })}
+          >
+            {displayFolders.filter.length ? (
+              displayFolders.map((folder) => (
+                <Folder key={folder.hash} directory={folder} inline={true} />
+              ))
+            ) : (
+              <div>No folders</div>
+            )}
+          </div>
+        )}
       </Collapse>
     </div>
   );

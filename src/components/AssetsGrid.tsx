@@ -2,6 +2,7 @@ import React from "react";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
 import Player from "@/components/Player";
+import { useSettingsStore } from "@/stores/settings";
 
 type AssetProps = {
   asset: AssetType;

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { createHash } from "node:crypto";
 import imageSize from "image-size";
+import "dotenv/config";
 
 import { extensions } from "@/utils/helpers";
 import { AssetType, DirectoryType, FilesTypes } from "../../types";
@@ -9,7 +10,14 @@ export function hash(string: string) {
   return createHash("sha256").update(string).digest("hex");
 }
 
-export default async function scan(path: string, files: FilesTypes = []) {
+export const cachePath = `./static/${hash(
+  process.env.TARGET_PATH as string,
+)}.json`;
+
+export default async function scan(
+  path: string,
+  files: FilesTypes = [],
+): Promise<FilesTypes> {
   const info = await fs.promises
     .readdir(path)
     .then((files) =>
@@ -20,6 +28,7 @@ export default async function scan(path: string, files: FilesTypes = []) {
     const pathFile = `${path}/${file}`;
     const stat = await fs.promises.stat(pathFile);
 
+    console.log(pathFile);
     if (stat.isDirectory()) {
       let current: DirectoryType = {
         name: file,
@@ -82,20 +91,12 @@ export default async function scan(path: string, files: FilesTypes = []) {
 }
 
 export function saveCache(data: FilesTypes): Promise<void> {
-  const path = `${process.env.STATIC_PATH}/${hash(
-    process.env.TARGET_PATH as string,
-  )}.json`;
-
-  return fs.promises.writeFile(path, JSON.stringify(data));
+  return fs.promises.writeFile(cachePath, JSON.stringify(data));
 }
 
 export function readCache(): Promise<FilesTypes> {
-  const path = `${process.env.STATIC_PATH}/${hash(
-    process.env.TARGET_PATH as string,
-  )}.json`;
-
   return fs.promises
-    .readFile(path, "utf-8")
+    .readFile(cachePath, "utf-8")
     .then((data) => JSON.parse(data) as FilesTypes)
     .catch(() => []);
 }
