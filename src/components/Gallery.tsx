@@ -19,7 +19,7 @@ interface Props {
   defaultCollapsed?: boolean;
 }
 
-const PAGE_LENGTH = 99;
+const PAGE_LENGTH = 400;
 
 export const Gallery: React.FC<Props> = ({
   assets,

@@ -54,11 +54,15 @@ const TimeBar: React.FC<{
   return (
     <>
       <div
-        className={css({ h: 1, rounded: "lg", bgColor: "red" })}
+        className={css({ height: 1, rounded: "lg", bgColor: "red" })}
         style={{ backgroundColor: "rgba(210, 210, 210, .1)" }}
       >
         <div
-          className={css({ h: 1, rounded: "lg", transition: "width 100ms" })}
+          className={css({
+            height: 1,
+            rounded: "lg",
+            transition: "width 100ms",
+          })}
           style={{
             width: `${progression}%`,
             backgroundColor: "rgba(210, 210, 210, .9)",
@@ -224,7 +228,7 @@ const Player: React.FC<PlayerProps> = ({ asset, autoPlay }) => {
                 left: 0,
                 pos: "absolute",
                 w: "full",
-                h: 12,
+                height: 12,
                 bg: "rgba(0, 0, 0, .3)",
                 transition: "opacity 200ms",
                 opacity: displayOverlay ? 1 : 0,
@@ -240,7 +244,7 @@ const Player: React.FC<PlayerProps> = ({ asset, autoPlay }) => {
                   px: 3,
                   display: "flex",
                   alignItems: "center",
-                  h: "full",
+                  height: "full",
                   justifyContent: "space-between",
                 })}
               >
@@ -293,7 +297,7 @@ const Player: React.FC<PlayerProps> = ({ asset, autoPlay }) => {
             justifyContent: "space-evenly",
             alignItems: "center",
             cursor: "pointer",
-            h: "full",
+            height: "full",
             py: 4,
             width: "full",
           })}

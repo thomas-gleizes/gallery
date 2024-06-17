@@ -71,7 +71,7 @@ const classnames = {
     alignItems: "center",
     justifyContent: "center",
     w: 8,
-    h: 8,
+    height: 8,
     rounded: "sm",
     cursor: "pointer",
     bgColor: "rgba(255, 255, 255, 0.5)",
@@ -100,7 +100,7 @@ const ProgressBar: React.FC<{ index: number; delay: number }> = ({
         bottom: 0,
         left: 0,
         right: 0,
-        h: 1,
+        height: 1,
       })}
     >
       <div
@@ -111,7 +111,7 @@ const ProgressBar: React.FC<{ index: number; delay: number }> = ({
           transitionTimingFunction: "linear",
         }}
         className={css({
-          h: "full",
+          height: "full",
           bgColor: "rgba(255, 255, 255, 0.9)",
         })}
       />

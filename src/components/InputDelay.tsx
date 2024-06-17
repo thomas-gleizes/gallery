@@ -30,7 +30,7 @@ const InputDelay: React.FC = () => {
       className={css({
         rounded: "sm",
         px: 2,
-        h: 8,
+        height: 8,
         w: 16,
         bgColor: "rgba(255, 255, 255, 0.5)",
         border: "1px solid white",

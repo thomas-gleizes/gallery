@@ -1,83 +1,112 @@
-import React from "react";
+import React, { useMemo, useRef, useState } from "react";
+import { useEvent } from "react-use";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
-import Player from "@/components/Player";
-import { useSettingsStore } from "@/stores/settings";
-
-type AssetProps = {
-  asset: AssetType;
-  onClick?: () => void;
-  number?: number;
-};
-
-const Asset: React.FC<AssetProps> = ({ asset, onClick, number }) => {
-  if (!asset.dimensions.width) {
-    return null;
-  }
-
-  return (
-    <div
-      onClick={onClick}
-      className={css({
-        rounded: "lg",
-        overflow: "hidden",
-        position: "relative",
-      })}
-    >
-      {number && (
-        <div
-          className={css({
-            textShadow: "0 0 2px rgba(0, 0, 0, 0.5)",
-            color: "rgba(255, 255, 255, 0.7)",
-            position: "absolute",
-            fontWeight: "bold",
-            top: 4,
-            right: 4,
-          })}
-        >
-          {number}
-        </div>
-      )}
-      <img
-        width={asset.dimensions.width}
-        height={asset.dimensions.height}
-        alt={asset.name}
-        className={css({ bgColor: "gray.300", maxWidth: "99vmw" })}
-        src={asset.url}
-      />
-    </div>
-  );
-};
 
 type AssetsGridProps = {
   assets: AssetType[];
   onView?: (asset: AssetType) => void;
 };
 
+type Column = {
+  height: number;
+  assets: {
+    asset: AssetType;
+    top: number;
+    height: number;
+    width: number;
+  }[];
+};
+
 const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
+  function getColumnCount(width: number) {
+    return Math.max(1, Math.floor(width / 500));
+  }
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gridWidth = useRef<number>(window.innerWidth);
+  const [columnCount, setColumnCount] = useState<number>(
+    getColumnCount(gridWidth.current),
+  );
+
+  const columns = useMemo<Column[]>(() => {
+    const cols: Column[] = Array.from({ length: columnCount }, () => ({
+      height: 0,
+      assets: [],
+    }));
+
+    const colWidth = gridWidth.current / cols.length;
+
+    let minColIndex: number = 0;
+    for (const asset of assets) {
+      if (asset.file !== "image") continue;
+
+      const height =
+        asset.dimensions.height * (colWidth / asset.dimensions.width);
+
+      cols[minColIndex].assets.push({
+        asset,
+        top: cols[minColIndex].height,
+        height,
+        width: colWidth,
+      });
+      cols[minColIndex].height += height;
+
+      minColIndex = cols.reduce((minIndex, col, index) => {
+        if (col.height < cols[minIndex].height) {
+          return index;
+        }
+
+        return minIndex;
+      }, 0);
+    }
+
+    return cols;
+  }, [columnCount, assets]);
+
+  function handleSize() {
+    if (!containerRef.current) return;
+
+    gridWidth.current = containerRef.current.clientWidth;
+    setColumnCount(getColumnCount(gridWidth.current));
+  }
+
+  useEvent("resize", () => handleSize(), window);
+
   return (
     <div
       className={css({
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, 500px)",
-        gap: "1rem",
-        justifyContent: "center",
-        alignItems: "center",
-        gridAutoRows: "auto",
+        pos: "relative",
+        display: "flex",
       })}
+      style={{ height: Math.max(...columns.map((col) => col.height)) }}
+      ref={containerRef}
     >
-      {assets.map((asset, index) =>
-        asset.file === "image" ? (
-          <Asset
-            key={asset.hash}
-            asset={asset}
-            onClick={() => onView && onView(asset)}
-            number={index + 1}
-          />
-        ) : asset.file === "video" ? (
-          <Player key={asset.hash} asset={asset} />
-        ) : null,
-      )}
+      {columns.map((col, colIndex) => (
+        <React.Fragment key={colIndex}>
+          {col.assets.map(({ asset, top, height, width }) => (
+            <div
+              key={asset.hash}
+              onClick={() => onView?.(asset)}
+              style={{
+                position: "absolute",
+                top: `${top}px`,
+                width: `${width}px`,
+                height: `${height}px`,
+                left: `${(gridWidth.current / columns.length) * colIndex}px`,
+              }}
+              className={css({ p: 2 })}
+            >
+              <img
+                alt={asset.name}
+                height={height}
+                width={width}
+                src={asset.url}
+              />
+            </div>
+          ))}
+        </React.Fragment>
+      ))}
     </div>
   );
 };

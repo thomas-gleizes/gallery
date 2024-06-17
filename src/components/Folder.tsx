@@ -34,22 +34,20 @@ export const Folder: React.FC<Props> = ({ directory, inline }) => {
     >
       <div
         onClick={() => router.push(`/d/${directory.pathname}`)}
-        className={css(
-          {
-            bgColor: "gray.200",
-            rounded: "lg",
-            shadow: "lg",
-            overflow: "hidden",
-            cursor: "pointer",
-          },
-          inline
-            ? { width: "300px", height: "200px" }
-            : { width: "300", height: "350" },
-        )}
+        className={css({
+          bgColor: "gray.200",
+          rounded: "lg",
+          shadow: "lg",
+          overflow: "hidden",
+          cursor: "pointer",
+        })}
       >
         <img
           src={images[0]?.url}
           alt={images[0]?.name}
+          width={inline ? 300 : 300}
+          height={inline ? 200 : 350}
+          style={{ height: inline ? "200px" : "350px" }}
           className={css({
             bgGradient: "to-br",
             gradientTo: "gray.200",
