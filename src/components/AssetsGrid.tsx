@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { useEvent } from "react-use";
+import { useMount } from "react-use";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
 
@@ -10,45 +10,52 @@ type AssetsGridProps = {
 
 type Column = {
   height: number;
-  assets: {
-    asset: AssetType;
-    top: number;
-    height: number;
-    width: number;
-  }[];
+  items: Item[];
+};
+
+type Item = {
+  asset: AssetType;
+  top: number;
+  height: number;
+  width: number;
+  left: number;
 };
 
 const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
-  function getColumnCount(width: number) {
-    return Math.max(1, Math.floor(width / 500));
-  }
+  const calculateColumn = (width: number) => {
+    const count = Math.max(1, Math.floor(width / 400));
+
+    return {
+      count,
+      width: width / count,
+    };
+  };
 
   const containerRef = useRef<HTMLDivElement>(null);
   const gridWidth = useRef<number>(window.innerWidth);
-  const [columnCount, setColumnCount] = useState<number>(
-    getColumnCount(gridWidth.current),
+  const [column, setColumn] = useState<{ count: number; width: number }>(
+    calculateColumn(gridWidth.current),
   );
 
-  const columns = useMemo<Column[]>(() => {
-    const cols: Column[] = Array.from({ length: columnCount }, () => ({
+  const [items, height] = useMemo<[Item[], number]>(() => {
+    const cols: Column[] = Array.from({ length: column?.count }, () => ({
       height: 0,
-      assets: [],
+      items: [],
     }));
-
-    const colWidth = gridWidth.current / cols.length;
 
     let minColIndex: number = 0;
     for (const asset of assets) {
       if (asset.file !== "image") continue;
 
       const height =
-        asset.dimensions.height * (colWidth / asset.dimensions.width);
+        asset.dimensions.height * (column.width / asset.dimensions.width);
 
-      cols[minColIndex].assets.push({
+      cols[minColIndex].items.push({
         asset,
         top: cols[minColIndex].height,
         height,
-        width: colWidth,
+        width: column.width,
+        left: column.width * minColIndex,
       });
       cols[minColIndex].height += height;
 
@@ -61,51 +68,48 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
       }, 0);
     }
 
-    return cols;
-  }, [columnCount, assets]);
+    return [
+      cols.flatMap((col) => col.items).sort((a, b) => a.top - b.top),
+      Math.max(...cols.map((col) => col.height)),
+    ];
+  }, [column, assets]);
 
   function handleSize() {
     if (!containerRef.current) return;
 
     gridWidth.current = containerRef.current.clientWidth;
-    setColumnCount(getColumnCount(gridWidth.current));
+    setColumn(calculateColumn(gridWidth.current));
   }
 
-  useEvent("resize", () => handleSize(), window);
+  useMount(() => {
+    const resizeObserver = new ResizeObserver(handleSize);
+
+    resizeObserver.observe(containerRef.current!);
+  });
 
   return (
     <div
-      className={css({
-        pos: "relative",
-        display: "flex",
-      })}
-      style={{ height: Math.max(...columns.map((col) => col.height)) }}
+      className={css({ pos: "relative", mx: "auto" })}
+      style={{ height }}
       ref={containerRef}
     >
-      {columns.map((col, colIndex) => (
-        <React.Fragment key={colIndex}>
-          {col.assets.map(({ asset, top, height, width }) => (
-            <div
-              key={asset.hash}
-              onClick={() => onView?.(asset)}
-              style={{
-                position: "absolute",
-                top: `${top}px`,
-                width: `${width}px`,
-                height: `${height}px`,
-                left: `${(gridWidth.current / columns.length) * colIndex}px`,
-              }}
-              className={css({ p: 2 })}
-            >
-              <img
-                alt={asset.name}
-                height={height}
-                width={width}
-                src={asset.url}
-              />
-            </div>
-          ))}
-        </React.Fragment>
+      {items.map(({ asset, top, height, width, left }) => (
+        <div
+          key={asset.hash}
+          onClick={() => onView?.(asset)}
+          style={{
+            position: "absolute",
+            transform: `translate(${left}px, ${top}px)`,
+          }}
+        >
+          <img
+            className={css({ p: 1, rounded: "2xl" })}
+            alt={asset.name}
+            height={height}
+            width={width}
+            src={asset.url}
+          />
+        </div>
       ))}
     </div>
   );

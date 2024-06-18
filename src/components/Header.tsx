@@ -40,7 +40,7 @@ export const Header = () => {
     <div
       className={css({
         position: "fixed",
-        sm: { top: 4, px: 10 },
+        lg: { top: 4, px: 10 },
         top: 0,
         width: "100%",
         zIndex: 10,
@@ -49,9 +49,7 @@ export const Header = () => {
       <nav
         className={css({
           bgColor: "blue.700",
-          px: 5,
-          py: 3,
-          sm: { rounded: "md" },
+          sm: { px: 5, py: 3, rounded: "md" },
           shadow: "lg",
         })}
       >
@@ -81,7 +79,8 @@ export const Header = () => {
               <Link
                 href="/"
                 className={css({
-                  fontSize: "xl",
+                  fontSize: "sm",
+                  sm: { fontSize: "xl" },
                   color: "white",
                   fontWeight: "semibold",
                 })}
@@ -93,7 +92,8 @@ export const Header = () => {
               <Link
                 href="/random"
                 className={css({
-                  fontSize: "xl",
+                  fontSize: "sm",
+                  sm: { fontSize: "xl" },
                   color: "white",
                   fontWeight: "semibold",
                 })}
@@ -105,7 +105,8 @@ export const Header = () => {
               <Link
                 href="/latest"
                 className={css({
-                  fontSize: "xl",
+                  fontSize: "sm",
+                  sm: { fontSize: "xl" },
                   color: "white",
                   fontWeight: "semibold",
                 })}
@@ -117,7 +118,8 @@ export const Header = () => {
               <Link
                 href="/search"
                 className={css({
-                  fontSize: "xl",
+                  fontSize: "sm",
+                  sm: { fontSize: "xl" },
                   color: "white",
                   fontWeight: "semibold",
                 })}
@@ -141,6 +143,8 @@ export const Header = () => {
                 type="text"
                 placeholder="Search"
                 className={css({
+                  display: "none",
+                  sm: { display: "block" },
                   bgColor: "white",
                   color: "black",
                   border: "none",
