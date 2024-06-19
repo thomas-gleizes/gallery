@@ -87,6 +87,8 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
     resizeObserver.observe(containerRef.current!);
   });
 
+  useMount(handleSize);
+
   return (
     <div
       className={css({ pos: "relative", mx: "auto" })}
