@@ -12,5 +12,5 @@ async function main() {
 
 main()
   .then(() => console.log("Done"))
-  .catch(console.error)
+  .catch((err) => console.error("Error", err))
   .finally(() => process.exit(0));

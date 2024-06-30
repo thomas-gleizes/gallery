@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { createHash } from "node:crypto";
 import imageSize from "image-size";
+import ffmpeg from "fluent-ffmpeg";
 import "dotenv/config";
 
 import { extensions } from "@/utils/helpers";
@@ -8,6 +9,21 @@ import { AssetType, DirectoryType, FilesTypes } from "../../types";
 
 export function hash(string: string) {
   return createHash("sha256").update(string).digest("hex");
+}
+
+function getVideoDimensions(
+  path: string,
+): Promise<{ width: number; height: number }> {
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    ffmpeg.ffprobe(path, (err, metadata) => {
+      if (err) {
+        resolve({ width: 1080, height: 1920 });
+      } else {
+        const { width, height } = metadata.streams[0];
+        resolve({ width: width ?? 1080, height: height ?? 1920 });
+      }
+    });
+  });
 }
 
 export const cachePath = `./static/${hash(
@@ -80,7 +96,26 @@ export default async function scan(
           current.file = "image";
         } catch (error) {}
       } else if (extensions.video.includes(file.split(".").pop() as string)) {
-        current.file = "video";
+        try {
+          const dimensions = await getVideoDimensions(pathFile);
+
+          current.dimensions = {
+            width: dimensions.width,
+            height: dimensions.height,
+            orientation: "unknown",
+          };
+
+          if (current.dimensions.width > current.dimensions.height)
+            current.dimensions.orientation = "landscape";
+          else if (current.dimensions.width < current.dimensions.height)
+            current.dimensions.orientation = "portrait";
+          else if (current.dimensions.width === current.dimensions.height)
+            current.dimensions.orientation = "square";
+
+          current.file = "video";
+        } catch (error) {
+          console.log("error", error);
+        }
       }
 
       files.push(current as AssetType);

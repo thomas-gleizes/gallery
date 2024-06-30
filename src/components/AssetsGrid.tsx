@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { useMount } from "react-use";
 import { css } from "../../styled-system/css";
 import { AssetType } from "../../types";
+import Player from "@/components/Player";
 
 type AssetsGridProps = {
   assets: AssetType[];
@@ -45,8 +46,6 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
 
     let minColIndex: number = 0;
     for (const asset of assets) {
-      if (asset.file !== "image") continue;
-
       const height =
         asset.dimensions.height * (column.width / asset.dimensions.width);
 
@@ -98,19 +97,34 @@ const AssetsGrid: React.FC<AssetsGridProps> = ({ assets, onView }) => {
       {items.map(({ asset, top, height, width, left }) => (
         <div
           key={asset.hash}
-          onClick={() => onView?.(asset)}
           style={{
             position: "absolute",
             transform: `translate(${left}px, ${top}px)`,
           }}
         >
-          <img
-            className={css({ p: 1, rounded: "2xl" })}
-            alt={asset.name}
-            height={height}
-            width={width}
-            src={asset.url}
-          />
+          {asset.file === "image" ? (
+            <img
+              onClick={() => onView?.(asset)}
+              className={css({ p: 1, rounded: "2xl" })}
+              alt={asset.name}
+              height={height}
+              width={width}
+              src={asset.url}
+            />
+          ) : (
+            <div
+              className={css({
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 1,
+                rounded: "lg",
+              })}
+              style={{ width: `${width}px`, height: `${height}px` }}
+            >
+              <Player asset={asset} autoPlay={false} />
+            </div>
+          )}
         </div>
       ))}
     </div>
